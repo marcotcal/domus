@@ -1,3 +1,8 @@
+#
+# Main program 
+# This way to join Flask and PyQt5 was found on 
+# https://maxinterview.com/code/how-to-run-flask-with-pyqt5-F1F2886B120537C/
+#
 from PyQt5.QtWidgets import QLabel, QVBoxLayout, QMainWindow, QApplication, QWidget
 from PyQt5.QtCore import QTimer, Qt
 from flask import Flask, render_template
@@ -58,11 +63,9 @@ if __name__ == "__main__":
         app_.out_queue.put(msg)
         return 'Ok'
 
-#   Preparing parameters for flask to be given in the thread
-#   so that it doesn't collide with main thread
+    # Flask parameters
     kwargs = {'host': '0.0.0.0', 'port': 5000, 'threaded': True, 'use_reloader': False, 'debug': False}
-
-#   running flask thread
+    # Run Flask in another thread
     flaskThread = Thread(target=app_.run, daemon=True, kwargs=kwargs).start()
 
     app.exec_()
