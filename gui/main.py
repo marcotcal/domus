@@ -3,55 +3,59 @@
 # This way to join Flask and PyQt5 was found on 
 # https://maxinterview.com/code/how-to-run-flask-with-pyqt5-F1F2886B120537C/
 #
-from PyQt5.QtWidgets import QLabel, QVBoxLayout, QMainWindow, QApplication, QWidget
-from PyQt5.QtCore import QTimer, Qt
+from PyQt5.QtGui import QGuiApplication
+from PyQt5.QtQml import QQmlApplicationEngine
+from PyQt5.QtCore import QTimer
+from time import strftime, localtime
 from flask import Flask, render_template
-
 from threading import Thread
 from queue import Queue
 import sys
-from ui.form import Ui_Main
+from security import Security
 
-# You can copy and paste this code for test and run it
 
-class MainWindow(QMainWindow):
+class MainWindow(QGuiApplication):
 
     main_timer = None
     
     def __init__(self, *args, **kwargs):
         super(MainWindow, self).__init__(*args, **kwargs)
-        self.ui = Ui_Main()
-        self.ui.setupUi(self)
 
-        # self.setAttribute(Qt.WA_TranslucentBackground)
-        # self.setAttribute(Qt.WA_X11NetWmWindowTypeDesktop)
-        # self.setWindowFlags(Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint)
-        self.setWindowFlags(Qt.WindowStaysOnTopHint)
-        self.setGeometry(0,-6,1920,1080)
+        self.engine = QQmlApplicationEngine()
+        self.engine.quit.connect(self.quit)
+        self.engine.load('main.qml')
+
         self.main_timer = QTimer()
         self.main_timer.timeout.connect(self.read_sensors)
-        self.main_timer.start(1000)        
-        self.ui.bt_close.clicked.connect(self.exit_program)
+        self.main_timer.start(100)
+
+        self.security = Security()
+
+        self.engine.rootContext().setContextProperty('security', self.security)
+
+    def update_time(self):
+        # Pass the current time to QML.
+        curr_time = strftime("%H:%M:%S", localtime())
+        self.engine.rootObjects()[0].setProperty('currTime', curr_time)
 
     def read_sensors(self):
+        """
+        this code must be replaced
         if not self.in_queue.empty():
             data = self.in_queue.get_nowait()
             if type(data) is str:
                 self.ui.label.setText(data)
+        """
 
-    def exit_program(self):
-        self.close()
+        pass
 
 
-#   Creating instance of QApplication
 if __name__ == "__main__":
-    app = QApplication(sys.argv)
+    app = MainWindow(sys.argv)
     q = Queue()
-    window = MainWindow()
-    window.show()
     app_ = Flask(__name__)
     setattr(app_, "out_queue", q)
-    setattr(window, "in_queue", q)
+    setattr(app, "in_queue", q)
 
 #   setting our root
     @app_.route('/')
@@ -68,4 +72,4 @@ if __name__ == "__main__":
     # Run Flask in another thread
     flaskThread = Thread(target=app_.run, daemon=True, kwargs=kwargs).start()
 
-    app.exec_()
+    sys.exit(app.exec())
