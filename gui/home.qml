@@ -10,8 +10,7 @@ Page {
 
     title: qsTr("Home")
 
-    FontLoader { id: swiss2; source: "assets/swiss2.ttf" }
-    FontLoader { id: swiss911; source: "assets/swiss911.ttf" }
+    FontLoader { id: domus; source: "assets/domus.ttf" }
 
     Image {
         id: image
@@ -21,17 +20,17 @@ Page {
         fillMode: Image.PreserveAspectFit
 
         Text {
-            id: element
-            x: 157
-            y: 76
-            width: 189
+            id: title
+            x: 50
+            y: 50
+            width: 470
             height: 48
-            color: "#288c98"
+            color: "#6fa538"
             text: qsTr("HOME CONTROL")
             styleColor: "#ff6600"
             font.weight: Font.ExtraLight
-            font.family: swiss2.name
-            font.pixelSize: 50
+            font.family: domus.name
+            font.pixelSize: 38
         }
 
         MouseArea {
@@ -40,17 +39,31 @@ Page {
 
             Text {
                 id: element1
-                x: 662
-                y: 775
-                width: 597
+                x: 8
+                y: 501
+                width: 1919
                 height: 48
-                color: "#288c98"
-                text: qsTr("SECURITY CODE REQUIRED TO ACCESS THE SYSTEM PLESE TOUCH THE SCREEN")
+                color: "#6fa538"
+                text: qsTr("TOUCH TO ACCESS")
                 horizontalAlignment: Text.AlignHCenter
-                font.family: swiss2.name
+                font.family: domus.name
                 font.weight: Font.ExtraLight
                 styleColor: "#ff6600"
                 font.pixelSize: 48
+            }
+
+            Image {
+                id: image1
+                x: 515
+                y: 258
+                width: 800
+                height: 800
+                anchors.horizontalCenter: parent.horizontalCenter
+                anchors.verticalCenter: parent.verticalCenter
+                anchors.top: parent.top
+                opacity: 0.05
+                fillMode: Image.PreserveAspectFit
+                source: "images/circle.svg"
             }
         }
     }
@@ -64,3 +77,9 @@ Page {
     }
 }
 
+
+/*##^##
+Designer {
+    D{i:6;anchors_height:600;anchors_width:600;anchors_x:515;anchors_y:258}
+}
+##^##*/

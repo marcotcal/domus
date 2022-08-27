@@ -3,14 +3,19 @@
 # This way to join Flask and PyQt5 was found on 
 # https://maxinterview.com/code/how-to-run-flask-with-pyqt5-F1F2886B120537C/
 #
-from PyQt5.QtGui import QGuiApplication
-from PyQt5.QtQml import QQmlApplicationEngine
-from PyQt5.QtCore import QTimer
+import sys
+try:
+    from PyQt5.QtGui import QGuiApplication
+    from PyQt5.QtQml import QQmlApplicationEngine
+    from PyQt5.QtCore import QTimer
+except ImportError:
+    from PySide2.QtGui import QGuiApplication
+    from PySide2.QtQml import QQmlApplicationEngine
+    from PySide2.QtCore import QTimer
 from time import strftime, localtime
 from flask import Flask, render_template
 from threading import Thread
 from queue import Queue
-import sys
 from security import Security
 
 
@@ -72,4 +77,7 @@ if __name__ == "__main__":
     # Run Flask in another thread
     flaskThread = Thread(target=app_.run, daemon=True, kwargs=kwargs).start()
 
-    sys.exit(app.exec())
+    if 'PyQt5' in sys.modules:
+        sys.exit(app.exec())
+    else:
+        sys.exit(app.exec_())

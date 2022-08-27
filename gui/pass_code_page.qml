@@ -17,15 +17,7 @@ Page {
         enabled: false
         fillMode: Image.PreserveAspectFit
 
-        FontLoader {
-            id: swiss2
-            source: "assets/swiss2.ttf"
-        }
-
-        FontLoader {
-            id: swiss911
-            source: "assets/swiss911.ttf"
-        }
+        FontLoader {id: domus; source: "assets/domus.ttf" }
 
         Text {
             id: typed_code
@@ -46,7 +38,7 @@ Page {
         width: 130
         height: 45
         text: qsTr("01")
-        font.family: swiss2.name
+        font.family: domus.name
         font.pixelSize: 25
 
         contentItem: Text {
@@ -78,7 +70,7 @@ Page {
         height: 45
         text: qsTr("02")
         font.pixelSize: 25
-        font.family: swiss2.name
+        font.family: domus.name
         contentItem: Text {
             color: bt_02.down ? "#ffffff" : "#fafafa"
             text: bt_02.text
@@ -107,7 +99,7 @@ Page {
         height: 45
         text: qsTr("03")
         font.pixelSize: 25
-        font.family: swiss2.name
+        font.family: domus.name
         contentItem: Text {
             color: bt_03.down ? "#ffffff" : "#fafafa"
             text: bt_03.text
@@ -136,7 +128,7 @@ Page {
         width: 130
         height: 45
         text: qsTr("04")
-        font.family: swiss2.name
+        font.family: domus.name
         font.pixelSize: 25
 
         contentItem: Text {
@@ -168,7 +160,7 @@ Page {
         height: 45
         text: qsTr("05")
         font.pixelSize: 25
-        font.family: swiss2.name
+        font.family: domus.name
         contentItem: Text {
             color: bt_05.down ? "#ffffff" : "#fafafa"
             text: bt_05.text
@@ -197,7 +189,7 @@ Page {
         height: 45
         text: qsTr("06")
         font.pixelSize: 25
-        font.family: swiss2.name
+        font.family: domus.name
         contentItem: Text {
             color: bt_06.down ? "#ffffff" : "#fafafa"
             text: bt_06.text
@@ -226,7 +218,7 @@ Page {
         width: 130
         height: 45
         text: qsTr("07")
-        font.family: swiss2.name
+        font.family: domus.name
         font.pixelSize: 25
 
         contentItem: Text {
@@ -258,7 +250,7 @@ Page {
         height: 45
         text: qsTr("08")
         font.pixelSize: 25
-        font.family: swiss2.name
+        font.family: domus.name
         contentItem: Text {
             color: bt_08.down ? "#ffffff" : "#fafafa"
             text: bt_08.text
@@ -287,7 +279,7 @@ Page {
         height: 45
         text: qsTr("09")
         font.pixelSize: 25
-        font.family: swiss2.name
+        font.family: domus.name
         contentItem: Text {
             color: bt_09.down ? "#ffffff" : "#fafafa"
             text: bt_09.text
@@ -316,7 +308,7 @@ Page {
         width: 130
         height: 45
         text: qsTr("00")
-        font.family: swiss2.name
+        font.family: domus.name
         font.pixelSize: 25
 
         contentItem: Text {
@@ -348,7 +340,7 @@ Page {
         height: 45
         text: qsTr("ENT")
         font.pixelSize: 25
-        font.family: swiss2.name
+        font.family: domus.name
         contentItem: Text {
             color: bt_enter.down ? "#ffffff" : "#fafafa"
             text: bt_enter.text
@@ -377,7 +369,7 @@ Page {
         height: 45
         text: qsTr("CAN")
         font.pixelSize: 25
-        font.family: swiss2.name
+        font.family: domus.name
         contentItem: Text {
             color: bt_cancel.down ? "#ffffff" : "#fafafa"
             text: bt_cancel.text
@@ -489,15 +481,15 @@ Page {
     }
 
     Text {
-        id: element
-        x: 157
-        y: 76
+        id: title
+        x: 50
+        y: 50
         width: 189
         height: 48
-        color: "#288c98"
+        color: "#6fa538"
         text: qsTr("HOME CONTROL")
-        font.pixelSize: 50
-        font.family: swiss2.name
+        font.pixelSize: 38
+        font.family: domus.name
         font.weight: Font.ExtraLight
         styleColor: "#ff6600"
     }
