@@ -8,15 +8,35 @@ Page {
 
     Image {
         id: background_pg
+        opacity: 0.8
         layer.format: ShaderEffectSource.RGBA
         layer.smooth: false
         layer.mipmap: false
         clip: false
         visible: true
         anchors.fill: parent
-        source: "images/background.svg"
+        source: "images/management.svg"
         enabled: false
         fillMode: Image.PreserveAspectFit
+
+        Image {
+            id: rotor2
+            x: 630
+            y: 170
+            width: 1017
+            height: 971
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.verticalCenter: parent.verticalCenter
+            source: "images/rotor2.svg"
+            fillMode: Image.PreserveAspectFit
+            RotationAnimation on rotation {
+                loops: Animation.Infinite
+                from: 0
+                to: 360
+                target: rotor2
+                duration: 40000
+            }
+        }
 
         FontLoader { id: domus; source: "assets/domus.ttf" }
 
@@ -32,6 +52,39 @@ Page {
             fillMode: Image.PreserveAspectFit
             source: "images/circle.svg"
         }
+
+        Image {
+            id: rotor1
+            x: 582
+            y: 277
+            width: 684
+            height: 684
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.verticalCenter: parent.verticalCenter
+            source: "images/rotor.svg"
+            fillMode: Image.PreserveAspectFit
+            RotationAnimation on rotation {
+                loops: Animation.Infinite
+                from: 360
+                to: 0
+                duration: 8000
+                target: rotor1
+            }
+
+            Image {
+                id: center_disc
+                x: 142
+                y: 132
+                width: 500
+                height: 500
+                opacity: 1
+                anchors.verticalCenter: parent.verticalCenter
+                anchors.horizontalCenter: parent.horizontalCenter
+                source: "images/center_disc.svg"
+                fillMode: Image.PreserveAspectFit
+            }
+        }
+
     }
 
     Text {
@@ -50,8 +103,8 @@ Page {
 
     Button {
         id: bt_sensors
-        x: 299
-        y: 230
+        x: 191
+        y: 142
         width: 200
         height: 200
         text: qsTr("SENSORS")
@@ -79,8 +132,8 @@ Page {
 
     Button {
         id: bt_security
-        x: 426
-        y: 771
+        x: 1423
+        y: 761
         width: 230
         height: 230
         text: qsTr("SECURITY")
@@ -109,7 +162,7 @@ Page {
     Button {
         id: bt_lights
         x: 96
-        y: 464
+        y: 518
         width: 180
         height: 180
         text: qsTr("LIGHTS")
@@ -137,16 +190,17 @@ Page {
 
     Button {
         id: bt_heat_system
-        x: 1321
-        y: 96
-        width: 310
-        height: 310
+        x: 1451
+        y: 152
+        width: 230
+        height: 230
         text: qsTr("SECURITY")
         contentItem: Text {
             width: 214
             height: 218
             color: bt_heat_system.down ? "#ffffff" : "#ffff00"
             text: "HEAT SYSTEM"
+            wrapMode: Text.WordWrap
             verticalAlignment: Text.AlignVCenter
             opacity: enabled ? 1.0 : 0.3
             horizontalAlignment: Text.AlignHCenter
@@ -169,8 +223,8 @@ Page {
 
     Text {
         id: avg_temperature
-        x: 1487
-        y: 435
+        x: 1417
+        y: 97
         width: 350
         height: 20
         color: "#6fa538"
@@ -183,8 +237,8 @@ Page {
 
     Text {
         id: heat_system_status
-        x: 1487
-        y: 461
+        x: 1417
+        y: 123
         width: 350
         height: 20
         color: "#6fa538"
@@ -197,13 +251,13 @@ Page {
 
     Text {
         id: security_system_status
-        x: 155
-        y: 672
+        x: 1501
+        y: 671
         width: 375
         height: 19
         color: "#6fa538"
         text: qsTr("SECURITY SYSTEM: DISARMED")
-        horizontalAlignment: Text.AlignRight
+        horizontalAlignment: Text.AlignLeft
         font.weight: Font.ExtraLight
         styleColor: "#ff6600"
         font.family: domus.name
@@ -212,8 +266,8 @@ Page {
 
     Text {
         id: gas_alarm_status
-        x: 1487
-        y: 487
+        x: 1417
+        y: 71
         width: 350
         height: 20
         color: "#6fa538"
@@ -271,8 +325,8 @@ Page {
 
     Text {
         id: central_control_status_01
-        x: 971
-        y: 96
+        x: 135
+        y: 359
         width: 105
         height: 14
         color: "#6fa538"
@@ -286,8 +340,8 @@ Page {
 
     Text {
         id: central_control_status_02
-        x: 971
-        y: 116
+        x: 135
+        y: 379
         width: 105
         height: 14
         color: "#6fa538"
@@ -301,8 +355,8 @@ Page {
 
     Text {
         id: central_control_status_04
-        x: 971
-        y: 158
+        x: 135
+        y: 421
         width: 105
         height: 14
         color: "#6fa538"
@@ -316,8 +370,8 @@ Page {
 
     Text {
         id: central_control_status_03
-        x: 971
-        y: 136
+        x: 135
+        y: 399
         width: 105
         height: 16
         color: "#6fa538"
@@ -331,8 +385,8 @@ Page {
 
     Text {
         id: central_control_status_05
-        x: 1082
-        y: 96
+        x: 246
+        y: 359
         width: 105
         height: 14
         color: "#6fa538"
@@ -346,8 +400,8 @@ Page {
 
     Text {
         id: central_control_status_06
-        x: 1082
-        y: 116
+        x: 246
+        y: 379
         width: 105
         height: 14
         color: "#6fa538"
@@ -361,8 +415,8 @@ Page {
 
     Text {
         id: central_control_status_08
-        x: 1082
-        y: 158
+        x: 246
+        y: 421
         width: 105
         height: 14
         color: "#6fa538"
@@ -376,8 +430,8 @@ Page {
 
     Text {
         id: central_control_status_07
-        x: 1082
-        y: 136
+        x: 246
+        y: 399
         width: 105
         height: 16
         color: "#6fa538"
@@ -391,8 +445,8 @@ Page {
 
     Text {
         id: central_control_status_09
-        x: 1193
-        y: 96
+        x: 357
+        y: 359
         width: 105
         height: 14
         color: "#6fa538"
@@ -406,8 +460,8 @@ Page {
 
     Text {
         id: central_control_status_10
-        x: 1193
-        y: 116
+        x: 357
+        y: 379
         width: 105
         height: 14
         color: "#6fa538"
@@ -421,8 +475,8 @@ Page {
 
     Text {
         id: central_control_status_12
-        x: 1193
-        y: 158
+        x: 357
+        y: 421
         width: 105
         height: 14
         color: "#6fa538"
@@ -436,8 +490,8 @@ Page {
 
     Text {
         id: central_control_status_11
-        x: 1193
-        y: 136
+        x: 357
+        y: 399
         width: 105
         height: 16
         color: "#6fa538"
@@ -449,51 +503,10 @@ Page {
         horizontalAlignment: Text.AlignLeft
     }
 
-    Rectangle {
-        id: bar_01
-        x: 955
-        y: 84
-        width: 10
-        height: 899
-        color: "#ffff44"
-        anchors.horizontalCenter: parent.horizontalCenter
-        anchors.verticalCenter: parent.verticalCenter
-    }
-
-    Rectangle {
-        id: bar_02
-        x: 1471
-        y: 406
-        width: 10
-        height: 99
-        color: "#ffff44"
-    }
-
-    Rectangle {
-        id: bar_03
-        x: 956
-        y: 90
-        width: 10
-        height: 899
-        color: "#ffff44"
-        rotation: 90
-        anchors.horizontalCenter: parent.horizontalCenter
-        anchors.verticalCenter: parent.verticalCenter
-    }
-
-    Rectangle {
-        id: bar_04
-        x: 536
-        y: 665
-        width: 10
-        height: 106
-        color: "#ffff44"
-    }
-
     Text {
         id: front_door
-        x: 155
-        y: 697
+        x: 1501
+        y: 696
         width: 375
         height: 19
         color: "#6fa538"
@@ -502,13 +515,13 @@ Page {
         styleColor: "#ff6600"
         font.family: domus.name
         font.pixelSize: 15
-        horizontalAlignment: Text.AlignRight
+        horizontalAlignment: Text.AlignLeft
     }
 
     Text {
         id: garage_gate
-        x: 155
-        y: 722
+        x: 1501
+        y: 721
         width: 375
         height: 19
         color: "#6fa538"
@@ -517,7 +530,71 @@ Page {
         styleColor: "#ff6600"
         font.family: domus.name
         font.pixelSize: 15
-        horizontalAlignment: Text.AlignRight
+        horizontalAlignment: Text.AlignLeft
+    }
+
+    Button {
+        id: bt_energy
+        x: 1607
+        y: 379
+        width: 200
+        height: 200
+        text: qsTr("ENERGY")
+        background: Rectangle {
+            color: bt_energy.down ? "#007F05" : "#007b05"
+            radius: 155
+            implicitHeight: 40
+            border.width: 10
+            implicitWidth: 100
+            opacity: enabled ? 1 : 0.3
+            border.color: "#004f05"
+        }
+        font.family: domus.name
+        font.pixelSize: 25
+        contentItem: Text {
+            width: 230
+            height: 230
+            color: bt_energy.down ? "#ffffff" : "#ffff00"
+            text: "ENERGY"
+            wrapMode: Text.WordWrap
+            horizontalAlignment: Text.AlignHCenter
+            elide: Text.ElideRight
+            opacity: enabled ? 1.0 : 0.3
+            verticalAlignment: Text.AlignVCenter
+            font: bt_energy.font
+        }
+    }
+
+    Button {
+        id: bt_energy1
+        x: 293
+        y: 708
+        width: 220
+        height: 220
+        text: qsTr("ENERGY")
+        background: Rectangle {
+            color: bt_energy1.down ? "#007F05" : "#007b05"
+            radius: 155
+            implicitHeight: 40
+            border.width: 10
+            implicitWidth: 100
+            opacity: enabled ? 1 : 0.3
+            border.color: "#004f05"
+        }
+        font.family: domus.name
+        font.pixelSize: 25
+        contentItem: Text {
+            width: 230
+            height: 230
+            color: bt_energy1.down ? "#ffffff" : "#ffff00"
+            text: "OUTLETS"
+            wrapMode: Text.WordWrap
+            elide: Text.ElideRight
+            horizontalAlignment: Text.AlignHCenter
+            opacity: enabled ? 1.0 : 0.3
+            verticalAlignment: Text.AlignVCenter
+            font: bt_energy1.font
+        }
     }
 
 }
