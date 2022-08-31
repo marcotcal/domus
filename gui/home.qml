@@ -16,14 +16,14 @@ Page {
         id: image
         antialiasing: true
         anchors.fill: parent
-        source: "images/background.svg"
+        source: "images/home.svg"
         fillMode: Image.PreserveAspectFit
 
         Text {
             id: title
-            x: 50
-            y: 50
-            width: 470
+            x: 180
+            y: 58
+            width: 437
             height: 48
             color: "#6fa538"
             text: qsTr("HOME CONTROL")
@@ -39,9 +39,9 @@ Page {
 
             Text {
                 id: element1
-                x: 8
-                y: 501
-                width: 1919
+                x: 0
+                y: 930
+                width: 1920
                 height: 48
                 color: "#6fa538"
                 text: qsTr("TOUCH TO ACCESS")

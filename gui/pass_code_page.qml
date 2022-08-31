@@ -7,13 +7,17 @@ Page {
 
     Image {
         id: background_pg
+        anchors.rightMargin: 0
+        anchors.bottomMargin: 0
+        anchors.leftMargin: 0
+        anchors.topMargin: 0
         layer.format: ShaderEffectSource.RGBA
         layer.smooth: false
         layer.mipmap: false
         clip: false
         visible: true
         anchors.fill: parent
-        source: "images/background.svg"
+        source: "images/access.svg"
         enabled: false
         fillMode: Image.PreserveAspectFit
 
@@ -33,9 +37,9 @@ Page {
 
     Button {
         id: bt_01
-        x: 400
-        y: 350
-        width: 130
+        x: 156
+        y: 247
+        width: 100
         height: 45
         text: qsTr("01")
         font.family: domus.name
@@ -45,7 +49,7 @@ Page {
             text: bt_01.text
             font: bt_01.font
             opacity: enabled ? 1.0 : 0.3
-            color: bt_01.down ? "#ffffff" : "#fafafa"
+            color: bt_01.down ? "#ddff55" : "#aad400"
             horizontalAlignment: Text.AlignHCenter
             verticalAlignment: Text.AlignVCenter
             elide: Text.ElideRight
@@ -58,21 +62,21 @@ Page {
             border.color: "#288c98"
             border.width: 1
             radius: 20
-            color: bt_01.down ? "#A6A6D9" : "#288c98"
+            color: bt_01.down ? "#6b9800" : "#668000"
         }
     }
 
     Button {
         id: bt_02
-        x: 550
-        y: 350
-        width: 130
+        x: 287
+        y: 247
+        width: 100
         height: 45
         text: qsTr("02")
         font.pixelSize: 25
         font.family: domus.name
         contentItem: Text {
-            color: bt_02.down ? "#ffffff" : "#fafafa"
+            color: bt_02.down ? "#ddff55" : "#aad400"
             text: bt_02.text
             opacity: enabled ? 1.0 : 0.3
             elide: Text.ElideRight
@@ -81,7 +85,7 @@ Page {
             horizontalAlignment: Text.AlignHCenter
         }
         background: Rectangle {
-            color: bt_02.down ? "#A6A6D9" : "#288c98"
+            color: bt_02.down ? "#6b9800" : "#668000"
             radius: 20
             opacity: enabled ? 1 : 0.3
             border.width: 1
@@ -93,15 +97,15 @@ Page {
 
     Button {
         id: bt_03
-        x: 700
-        y: 350
-        width: 130
+        x: 415
+        y: 247
+        width: 100
         height: 45
         text: qsTr("03")
         font.pixelSize: 25
         font.family: domus.name
         contentItem: Text {
-            color: bt_03.down ? "#ffffff" : "#fafafa"
+            color: bt_03.down ? "#ddff55" : "#aad400"
             text: bt_03.text
             opacity: enabled ? 1.0 : 0.3
             elide: Text.ElideRight
@@ -110,7 +114,7 @@ Page {
             horizontalAlignment: Text.AlignHCenter
         }
         background: Rectangle {
-            color: bt_03.down ? "#A6A6D9" : "#288c98"
+            color: bt_03.down ? "#6b9800" : "#668000"
             radius: 20
             opacity: enabled ? 1 : 0.3
             border.width: 1
@@ -123,9 +127,9 @@ Page {
     /* second line */
     Button {
         id: bt_04
-        x: 400
-        y: 400
-        width: 130
+        x: 156
+        y: 297
+        width: 100
         height: 45
         text: qsTr("04")
         font.family: domus.name
@@ -135,7 +139,7 @@ Page {
             text: bt_04.text
             font: bt_04.font
             opacity: enabled ? 1.0 : 0.3
-            color: bt_04.down ? "#ffffff" : "#fafafa"
+            color: bt_04.down ? "#ddff55" : "#aad400"
             horizontalAlignment: Text.AlignHCenter
             verticalAlignment: Text.AlignVCenter
             elide: Text.ElideRight
@@ -148,21 +152,21 @@ Page {
             border.color: "#288c98"
             border.width: 1
             radius: 20
-            color: bt_04.down ? "#A6A6D9" : "#288c98"
+            color: bt_04.down ? "#6b9800" : "#668000"
         }
     }
 
     Button {
         id: bt_05
-        x: 550
-        y: 400
-        width: 130
+        x: 287
+        y: 297
+        width: 100
         height: 45
         text: qsTr("05")
         font.pixelSize: 25
         font.family: domus.name
         contentItem: Text {
-            color: bt_05.down ? "#ffffff" : "#fafafa"
+            color: bt_05.down ? "#ddff55" : "#aad400"
             text: bt_05.text
             opacity: enabled ? 1.0 : 0.3
             elide: Text.ElideRight
@@ -171,7 +175,7 @@ Page {
             horizontalAlignment: Text.AlignHCenter
         }
         background: Rectangle {
-            color: bt_05.down ? "#A6A6D9" : "#288c98"
+            color: bt_05.down ? "#6b9800" : "#668000"
             radius: 20
             opacity: enabled ? 1 : 0.3
             border.width: 1
@@ -183,15 +187,15 @@ Page {
 
     Button {
         id: bt_06
-        x: 700
-        y: 400
-        width: 130
+        x: 415
+        y: 297
+        width: 100
         height: 45
         text: qsTr("06")
         font.pixelSize: 25
         font.family: domus.name
         contentItem: Text {
-            color: bt_06.down ? "#ffffff" : "#fafafa"
+            color: bt_06.down ? "#ddff55" : "#aad400"
             text: bt_06.text
             opacity: enabled ? 1.0 : 0.3
             elide: Text.ElideRight
@@ -200,7 +204,7 @@ Page {
             horizontalAlignment: Text.AlignHCenter
         }
         background: Rectangle {
-            color: bt_06.down ? "#A6A6D9" : "#288c98"
+            color: bt_06.down ? "#6b9800" : "#668000"
             radius: 20
             opacity: enabled ? 1 : 0.3
             border.width: 1
@@ -213,9 +217,9 @@ Page {
     /* third line */
     Button {
         id: bt_07
-        x: 400
-        y: 450
-        width: 130
+        x: 156
+        y: 347
+        width: 100
         height: 45
         text: qsTr("07")
         font.family: domus.name
@@ -225,7 +229,7 @@ Page {
             text: bt_07.text
             font: bt_07.font
             opacity: enabled ? 1.0 : 0.3
-            color: bt_07.down ? "#ffffff" : "#fafafa"
+            color: bt_07.down ? "#ddff55" : "#aad400"
             horizontalAlignment: Text.AlignHCenter
             verticalAlignment: Text.AlignVCenter
             elide: Text.ElideRight
@@ -238,21 +242,21 @@ Page {
             border.color: "#288c98"
             border.width: 1
             radius: 20
-            color: bt_07.down ? "#A6A6D9" : "#288c98"
+            color: bt_07.down ? "#6b9800" : "#668000"
         }
     }
 
     Button {
         id: bt_08
-        x: 550
-        y: 450
-        width: 130
+        x: 287
+        y: 347
+        width: 100
         height: 45
         text: qsTr("08")
         font.pixelSize: 25
         font.family: domus.name
         contentItem: Text {
-            color: bt_08.down ? "#ffffff" : "#fafafa"
+            color: bt_08.down ? "#ddff55" : "#aad400"
             text: bt_08.text
             opacity: enabled ? 1.0 : 0.3
             elide: Text.ElideRight
@@ -261,7 +265,7 @@ Page {
             horizontalAlignment: Text.AlignHCenter
         }
         background: Rectangle {
-            color: bt_08.down ? "#A6A6D9" : "#288c98"
+            color: bt_08.down ? "#6b9800" : "#668000"
             radius: 20
             opacity: enabled ? 1 : 0.3
             border.width: 1
@@ -273,15 +277,15 @@ Page {
 
     Button {
         id: bt_09
-        x: 700
-        y: 450
-        width: 130
+        x: 415
+        y: 347
+        width: 100
         height: 45
         text: qsTr("09")
         font.pixelSize: 25
         font.family: domus.name
         contentItem: Text {
-            color: bt_09.down ? "#ffffff" : "#fafafa"
+            color: bt_09.down ? "#ddff55" : "#aad400"
             text: bt_09.text
             opacity: enabled ? 1.0 : 0.3
             elide: Text.ElideRight
@@ -290,7 +294,7 @@ Page {
             horizontalAlignment: Text.AlignHCenter
         }
         background: Rectangle {
-            color: bt_09.down ? "#A6A6D9" : "#288c98"
+            color: bt_09.down ? "#6b9800" : "#668000"
             radius: 20
             opacity: enabled ? 1 : 0.3
             border.width: 1
@@ -303,9 +307,9 @@ Page {
     /* forth line */
     Button {
         id: bt_00
-        x: 550
-        y: 500
-        width: 130
+        x: 287
+        y: 397
+        width: 100
         height: 45
         text: qsTr("00")
         font.family: domus.name
@@ -315,7 +319,7 @@ Page {
             text: bt_00.text
             font: bt_00.font
             opacity: enabled ? 1.0 : 0.3
-            color: bt_00.down ? "#ffffff" : "#fafafa"
+            color: bt_00.down ? "#ddff55" : "#aad400"
             horizontalAlignment: Text.AlignHCenter
             verticalAlignment: Text.AlignVCenter
             elide: Text.ElideRight
@@ -328,21 +332,21 @@ Page {
             border.color: "#288c98"
             border.width: 1
             radius: 20
-            color: bt_00.down ? "#A6A6D9" : "#288c98"
+            color: bt_00.down ? "#6b9800" : "#668000"
         }
     }
 
     Button {
         id: bt_enter
-        x: 400
-        y: 500
-        width: 130
+        x: 156
+        y: 397
+        width: 100
         height: 45
         text: qsTr("ENT")
         font.pixelSize: 25
         font.family: domus.name
         contentItem: Text {
-            color: bt_enter.down ? "#ffffff" : "#fafafa"
+            color: bt_enter.down ? "#eaeaea" : "#ddff55"
             text: bt_enter.text
             opacity: enabled ? 1.0 : 0.3
             elide: Text.ElideRight
@@ -363,15 +367,15 @@ Page {
 
     Button {
         id: bt_cancel
-        x: 700
-        y: 500
-        width: 130
+        x: 415
+        y: 397
+        width: 100
         height: 45
         text: qsTr("CAN")
         font.pixelSize: 25
         font.family: domus.name
         contentItem: Text {
-            color: bt_cancel.down ? "#ffffff" : "#fafafa"
+            color: bt_cancel.down ? "#eaeaea" : "#ddff55"
             text: bt_cancel.text
             opacity: enabled ? 1.0 : 0.3
             elide: Text.ElideRight
@@ -380,11 +384,11 @@ Page {
             horizontalAlignment: Text.AlignHCenter
         }
         background: Rectangle {
-            color: bt_cancel.down ? "#ffb3ff" : "#ff66ff"
+            color: bt_cancel.down ? "#afaf22" : "#aaaa40"
             radius: 20
             opacity: enabled ? 1 : 0.3
             border.width: 1
-            border.color: "#ff9900"
+            border.color: "#909090"
             implicitHeight: 40
             implicitWidth: 100
         }
@@ -482,9 +486,9 @@ Page {
 
     Text {
         id: title
-        x: 50
-        y: 50
-        width: 189
+        x: 180
+        y: 58
+        width: 457
         height: 48
         color: "#6fa538"
         text: qsTr("HOME CONTROL")

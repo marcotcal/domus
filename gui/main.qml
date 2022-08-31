@@ -8,7 +8,7 @@ ApplicationWindow {
     color: "#000000"
     visible: true
     title: qsTr("Stack")
-    // flags:  Qt.FramelessWindowHint
+    flags:  Qt.FramelessWindowHint
 
     property string currTime: "00:00:00"
 
