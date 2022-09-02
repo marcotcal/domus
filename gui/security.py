@@ -31,3 +31,11 @@ class Security(QObject):
             return True
         else:
             return False
+
+    @Property(bool)
+    def verify_terminate_code(self):
+        # TODO temporary code (test) - to be replaced in future
+        if self._code == "909":
+            return True
+        else:
+            return False

@@ -64,6 +64,9 @@ Page {
             radius: 20
             color: bt_01.down ? "#6b9800" : "#668000"
         }
+        onClicked: {
+            security.code += "1"
+        }
     }
 
     Button {
@@ -93,6 +96,9 @@ Page {
             implicitHeight: 40
             implicitWidth: 100
         }
+        onClicked: {
+            security.code += "2"
+        }
     }
 
     Button {
@@ -121,6 +127,9 @@ Page {
             border.color: "#288c98"
             implicitHeight: 40
             implicitWidth: 100
+        }
+        onClicked: {
+            security.code += "3"
         }
     }
 
@@ -154,6 +163,9 @@ Page {
             radius: 20
             color: bt_04.down ? "#6b9800" : "#668000"
         }
+        onClicked: {
+            security.code += "4"
+        }
     }
 
     Button {
@@ -183,6 +195,9 @@ Page {
             implicitHeight: 40
             implicitWidth: 100
         }
+        onClicked: {
+            security.code += "5"
+        }
     }
 
     Button {
@@ -211,6 +226,9 @@ Page {
             border.color: "#288c98"
             implicitHeight: 40
             implicitWidth: 100
+        }
+        onClicked: {
+            security.code += "6"
         }
     }
 
@@ -244,6 +262,9 @@ Page {
             radius: 20
             color: bt_07.down ? "#6b9800" : "#668000"
         }
+        onClicked: {
+            security.code += "7"
+        }
     }
 
     Button {
@@ -272,6 +293,9 @@ Page {
             border.color: "#288c98"
             implicitHeight: 40
             implicitWidth: 100
+        }
+        onClicked: {
+            security.code += "8"
         }
     }
 
@@ -302,6 +326,9 @@ Page {
             implicitHeight: 40
             implicitWidth: 100
         }
+        onClicked: {
+            security.code += "9"
+        }
     }
 
     /* forth line */
@@ -314,7 +341,6 @@ Page {
         text: qsTr("00")
         font.family: domus.name
         font.pixelSize: 25
-
         contentItem: Text {
             text: bt_00.text
             font: bt_00.font
@@ -324,7 +350,6 @@ Page {
             verticalAlignment: Text.AlignVCenter
             elide: Text.ElideRight
         }
-
         background: Rectangle {
             implicitWidth: 100
             implicitHeight: 40
@@ -333,6 +358,9 @@ Page {
             border.width: 1
             radius: 20
             color: bt_00.down ? "#6b9800" : "#668000"
+        }
+        onClicked: {
+            security.code += "0"
         }
     }
 
@@ -363,6 +391,20 @@ Page {
             implicitHeight: 40
             implicitWidth: 100
         }
+        onClicked: {
+            if (security.verify_code) {
+                security.code = ""
+                stackView.push("management.qml")
+            } else {
+                if (security.verify_terminate_code) {
+                    ApplicationWindow.window.close()
+                } else {
+                    security.code = ""
+                    stackView.push("home.qml")
+                }
+            }
+            drawer.close()
+        }
     }
 
     Button {
@@ -392,94 +434,7 @@ Page {
             implicitHeight: 40
             implicitWidth: 100
         }
-    }
-
-    Connections {
-        target: bt_enter
-        function onClicked() {
-            if (security.verify_code) {
-                stackView.push("management.qml")
-            } else {
-                security.code = ""
-                stackView.push("home.qml")
-            }
-            drawer.close()
-        }
-    }
-
-    Connections {
-        target: bt_01
-        function onClicked() {
-            security.code += "1"
-        }
-    }
-
-    Connections {
-        target: bt_02
-        function onClicked() {
-            security.code += "2"
-        }
-    }
-
-    Connections {
-        target: bt_03
-        function onClicked() {
-            security.code += "3"
-        }
-    }
-
-    Connections {
-        target: bt_04
-        function onClicked() {
-            security.code += "4"
-        }
-    }
-
-    Connections {
-        target: bt_05
-        function onClicked() {
-            security.code += "5"
-        }
-    }
-
-    Connections {
-        target: bt_06
-        function onClicked() {
-            security.code += "6"
-        }
-    }
-
-    Connections {
-        target: bt_07
-        function onClicked() {
-            security.code += "7"
-        }
-    }
-
-    Connections {
-        target: bt_08
-        function onClicked() {
-            security.code += "8"
-        }
-    }
-
-    Connections {
-        target: bt_09
-        function onClicked() {
-            security.code += "9"
-        }
-    }
-
-    Connections {
-        target: bt_00
-        function onClicked() {
-            security.code += "0"
-        }
-    }
-
-    Connections {
-        target: bt_cancel
-        function onClicked() {
+        onClicked: {
             security.code = ""
         }
     }

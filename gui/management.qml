@@ -195,11 +195,19 @@ Page {
 
     Button {
         id: bt_heat_system
-        x: 189
-        y: 187
-        width: 300
-        height: 50
-        text: qsTr("SECURITY")
+        x: 156
+        y: 564
+        width: 120
+        height: 120
+        text: qsTr("HEAT SYSTEM")
+        Image {
+            x: 0
+            y: 0
+            width:120
+            height:120
+            id: icon
+            source: "images/button_bg.svg"
+        }
         contentItem: Text {
             width: 214
             height: 218
@@ -222,7 +230,7 @@ Page {
             border.width: 1
             implicitHeight: 40
         }
-        font.pixelSize: 25
+        font.pixelSize: 15
     }
 
     Button {
@@ -287,6 +295,47 @@ Page {
             opacity: enabled ? 1.0 : 0.3
             verticalAlignment: Text.AlignVCenter
             font: bt_outlets.font
+        }
+    }
+
+    Button {
+        id: bt_back
+        x: 157
+        y: 923
+        width: 100
+        height: 100
+        text: qsTr("CODE")
+        Image {
+            x: 0
+            y: 0
+            width:100
+            height:100
+            id: icon_heat_system
+            source: "images/button_bg.svg"
+        }
+        font.family: domus.name
+        contentItem: Text {
+            color: bt_back.down ? "#ddff55" : "#aad400"
+            text: "ENT"
+            elide: Text.ElideRight
+            opacity: enabled ? 1.0 : 0.3
+            horizontalAlignment: Text.AlignHCenter
+            verticalAlignment: Text.AlignVCenter
+            font: bt_back.font
+        }
+        background: Rectangle {
+            color: bt_back.down ? "#6b9800" : "#668000"
+            radius: 100
+            border.color: "#288c98"
+            border.width: 1
+            implicitHeight: 40
+            opacity: enabled ? 1 : 0.3
+            implicitWidth: 100
+        }
+        font.pixelSize: 25
+        onClicked: {
+            stackView.push("pass_code_page.qml")
+            drawer.close()
         }
     }
 
@@ -394,8 +443,8 @@ Page {
 
     Text {
         id: central_control_status_01
-        x: 215
-        y: 569
+        x: 856
+        y: 917
         width: 105
         height: 14
         color: "#6fa538"
@@ -409,8 +458,8 @@ Page {
 
     Text {
         id: central_control_status_02
-        x: 215
-        y: 589
+        x: 856
+        y: 937
         width: 105
         height: 14
         color: "#6fa538"
@@ -424,8 +473,8 @@ Page {
 
     Text {
         id: central_control_status_04
-        x: 215
-        y: 631
+        x: 856
+        y: 979
         width: 105
         height: 14
         color: "#6fa538"
@@ -439,8 +488,8 @@ Page {
 
     Text {
         id: central_control_status_03
-        x: 215
-        y: 609
+        x: 856
+        y: 957
         width: 105
         height: 16
         color: "#6fa538"
@@ -454,8 +503,8 @@ Page {
 
     Text {
         id: central_control_status_05
-        x: 326
-        y: 569
+        x: 967
+        y: 917
         width: 105
         height: 14
         color: "#6fa538"
@@ -469,8 +518,8 @@ Page {
 
     Text {
         id: central_control_status_06
-        x: 326
-        y: 589
+        x: 967
+        y: 937
         width: 105
         height: 14
         color: "#6fa538"
@@ -484,8 +533,8 @@ Page {
 
     Text {
         id: central_control_status_08
-        x: 326
-        y: 631
+        x: 967
+        y: 979
         width: 105
         height: 14
         color: "#6fa538"
@@ -499,8 +548,8 @@ Page {
 
     Text {
         id: central_control_status_07
-        x: 326
-        y: 609
+        x: 967
+        y: 957
         width: 105
         height: 16
         color: "#6fa538"
@@ -514,8 +563,8 @@ Page {
 
     Text {
         id: central_control_status_09
-        x: 437
-        y: 569
+        x: 1078
+        y: 917
         width: 105
         height: 14
         color: "#6fa538"
@@ -529,8 +578,8 @@ Page {
 
     Text {
         id: central_control_status_10
-        x: 437
-        y: 589
+        x: 1078
+        y: 937
         width: 105
         height: 14
         color: "#6fa538"
@@ -544,8 +593,8 @@ Page {
 
     Text {
         id: central_control_status_12
-        x: 437
-        y: 631
+        x: 1078
+        y: 979
         width: 105
         height: 14
         color: "#6fa538"
@@ -559,8 +608,8 @@ Page {
 
     Text {
         id: central_control_status_11
-        x: 437
-        y: 609
+        x: 1078
+        y: 957
         width: 105
         height: 16
         color: "#6fa538"
@@ -601,6 +650,5 @@ Page {
         font.pixelSize: 15
         horizontalAlignment: Text.AlignLeft
     }
-
 
 }
