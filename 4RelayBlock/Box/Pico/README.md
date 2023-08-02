@@ -2,4 +2,4 @@ On this component I user a module developed by Jesús Ramos (https://github.com/
 
 https://github.com/jramsgz/pico-w-home-assistant
 
-Thanks to the Jesús for the work! 
+Thanks to the Jesús for the excelent work! 
