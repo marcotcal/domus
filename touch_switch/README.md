@@ -4,6 +4,6 @@ depending on the device used. A D1 Mini or a ESP 12F bare module.
 
 ## Compile on Arduino
 
-  1. At File / Preferences menu add on Additional Board URL : http://arduino.esp8266.com/stable/package_esp8266com_index.json
-  2. Go / Tools / Boards / Board Manager and install esp8266 by ESP8266 Community version x.x.x
+  1. Go to menu: */ File / Preferences* and add on Additional Board URL : http://arduino.esp8266.com/stable/package_esp8266com_index.json
+  2. Go to menu: */ Tools / Boards / Board Manager* and install esp8266 by ESP8266 Community version x.x.x
  
