@@ -1,0 +1,240 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+CAUTION: Do not modify this file unless you know what you are doing.
+ Unexpected results may occur if the code is changed deliberately.
+-->
+<dbmodel pgmodeler-ver="1.1.0-beta1" use-changelog="false" last-position="0,0" last-zoom="1" max-obj-count="7"
+	 default-schema="public" default-owner="postgres"
+	 layers="Default layer"
+	 active-layers="0"
+	 layer-name-colors="#000000"
+	 layer-rect-colors="#b4b4b4"
+	 show-layer-names="false" show-layer-rects="false">
+<role name="marcotc"
+ superuser="true"
+ password="ald2004">
+</role>
+
+<database name="house_automations" is-template="false" allow-conns="true">
+</database>
+
+<schema name="public" layers="0" fill-color="#e1e1e1" name-color="#000000" sql-disabled="true">
+</schema>
+
+<schema name="relay_blocks" layers="0" rect-visible="true" fill-color="#e1e1e1" name-color="#31363b">
+	<role name="marcotc"/>
+</schema>
+
+<schema name="area" layers="0" rect-visible="true" fill-color="#e1e1e1" name-color="#31363b">
+	<role name="marcotc"/>
+</schema>
+
+<table name="relay_block" layers="0" collapse-mode="2" max-obj-count="4" z-value="0">
+	<schema name="relay_blocks"/>
+	<role name="marcotc"/>
+	<position x="300" y="720"/>
+	<column name="code" not-null="true">
+		<type name="character varying" length="15"/>
+	</column>
+	<column name="description" not-null="true">
+		<type name="character varying" length="100"/>
+	</column>
+	<column name="number_of_relays" not-null="true" default-value="0">
+		<type name="smallint" length="0"/>
+	</column>
+	<constraint name="relay_block_pk" type="pk-constr" table="relay_blocks.relay_block">
+		<columns names="code" ref-type="src-columns"/>
+	</constraint>
+
+	<customidxs object-type="column">
+		<object name="code_junction_box" index="2"/>
+	</customidxs>
+	<customidxs object-type="constraint">
+		<object name="junction_box_fk" index="1"/>
+	</customidxs></table>
+
+<table name="junction_box" layers="0" collapse-mode="2" max-obj-count="3" z-value="0">
+	<schema name="relay_blocks"/>
+	<role name="marcotc"/>
+	<position x="980" y="640"/>
+	<column name="code" not-null="true">
+		<type name="character varying" length="15"/>
+	</column>
+	<column name="description" not-null="true">
+		<type name="character varying" length="100"/>
+	</column>
+	<constraint name="junction_box_pk" type="pk-constr" table="relay_blocks.junction_box">
+		<columns names="code" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="house_room" layers="0" collapse-mode="2" max-obj-count="2" z-value="0">
+	<schema name="area"/>
+	<role name="marcotc"/>
+	<position x="1080" y="60"/>
+	<column name="code" not-null="true">
+		<type name="character varying" length="15"/>
+	</column>
+	<column name="description" not-null="true">
+		<type name="character varying" length="100"/>
+	</column>
+	<constraint name="house_room_pk" type="pk-constr" table="area.house_room">
+		<columns names="code" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<relationship name="junction_box_relay" type="rel1n" layers="0"
+	 src-col-pattern="{sc}_{st}"
+	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
+	 src-fk-pattern="{st}_fk"
+	 custom-color="#3d4313"
+	 src-table="relay_blocks.junction_box"
+	 dst-table="relay_blocks.relay_block"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="house_room_junction_box" type="rel1n" layers="0"
+	 src-col-pattern="{sc}_{st}"
+	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
+	 src-fk-pattern="{st}_fk"
+	 custom-color="#9e19b2"
+	 src-table="area.house_room"
+	 dst-table="relay_blocks.junction_box"
+	 src-required="false" dst-required="false"/>
+
+<table name="relay" layers="0" collapse-mode="2" max-obj-count="13" z-value="0">
+	<schema name="relay_blocks"/>
+	<role name="marcotc"/>
+	<position x="940" y="940"/>
+	<column name="code" not-null="true">
+		<type name="character varying" length="20"/>
+	</column>
+	<column name="relay_number" not-null="true">
+		<type name="smallint" length="0"/>
+	</column>
+	<column name="is_outlet" not-null="true" default-value="FALSE">
+		<type name="boolean" length="0"/>
+	</column>
+	<column name="is_normally_closed" not-null="true" default-value="FALSE">
+		<type name="boolean" length="0"/>
+	</column>
+	<column name="description" not-null="true">
+		<type name="character varying" length="100"/>
+	</column>
+	<column name="payload_on" not-null="true" default-value="'on'">
+		<type name="character varying" length="20"/>
+	</column>
+	<column name="payload_off" not-null="true" default-value="'off'">
+		<type name="character varying" length="20"/>
+	</column>
+	<column name="command_topic">
+		<type name="character varying" length="100"/>
+	</column>
+	<column name="state_topic">
+		<type name="character varying" length="100"/>
+	</column>
+	<column name="alternate_status_topic">
+		<type name="character varying" length="100"/>
+	</column>
+	<constraint name="relay_pk" type="pk-constr" table="relay_blocks.relay">
+		<columns names="code" ref-type="src-columns"/>
+	</constraint>
+
+	<customidxs object-type="column">
+		<object name="code_relay_block" index="5"/>
+	</customidxs>
+	<customidxs object-type="constraint">
+		<object name="relay_block_fk" index="1"/>
+	</customidxs></table>
+
+<relationship name="relay_block__relay" type="rel1n" layers="0"
+	 src-col-pattern="{sc}_{st}"
+	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
+	 src-fk-pattern="{st}_fk"
+	 custom-color="#153153"
+	 src-table="relay_blocks.relay_block"
+	 dst-table="relay_blocks.relay"
+	 src-required="false" dst-required="false"/>
+
+<table name="switch" layers="0" collapse-mode="2" max-obj-count="8" z-value="0">
+	<schema name="area"/>
+	<role name="marcotc"/>
+	<position x="620" y="320"/>
+	<column name="code" not-null="true">
+		<type name="character varying" length="20"/>
+	</column>
+	<column name="description" not-null="true">
+		<type name="character varying" length="100"/>
+	</column>
+	<column name="payload_on" not-null="true" default-value="'on'">
+		<type name="character varying" length="20"/>
+	</column>
+	<column name="payload_off" not-null="true" default-value="'off'">
+		<type name="character varying" length="20"/>
+	</column>
+	<column name="command_topic">
+		<type name="character varying" length="100"/>
+	</column>
+	<column name="state_topic">
+		<type name="character varying" length="100"/>
+	</column>
+	<constraint name="switch_pk" type="pk-constr" table="area.switch">
+		<columns names="code" ref-type="src-columns"/>
+	</constraint>
+
+	<customidxs object-type="column">
+		<object name="code_house_room" index="6"/>
+	</customidxs>
+	<customidxs object-type="constraint">
+		<object name="house_room_fk" index="1"/>
+	</customidxs></table>
+
+<table name="outlet" layers="0" collapse-mode="2" max-obj-count="8" z-value="0">
+	<schema name="area"/>
+	<role name="marcotc"/>
+	<position x="200" y="120"/>
+	<column name="code" not-null="true">
+		<type name="character varying" length="20"/>
+	</column>
+	<column name="description" not-null="true">
+		<type name="character varying" length="100"/>
+	</column>
+	<column name="payload_on" not-null="true" default-value="'on'">
+		<type name="character varying" length="20"/>
+	</column>
+	<column name="payload_off" not-null="true" default-value="'off'">
+		<type name="character varying" length="20"/>
+	</column>
+	<column name="command_topic">
+		<type name="character varying" length="100"/>
+	</column>
+	<column name="state_topic">
+		<type name="character varying" length="100"/>
+	</column>
+	<constraint name="outlet_pk" type="pk-constr" table="area.outlet">
+		<columns names="code" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<relationship name="house_room_switch" type="rel1n" layers="0"
+	 src-col-pattern="{sc}_{st}"
+	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
+	 src-fk-pattern="{st}_fk"
+	 custom-color="#a2adcb"
+	 src-table="area.house_room"
+	 dst-table="area.switch"
+	 src-required="false" dst-required="false">
+	<label ref-type="name-label">
+		<position x="0" y="0"/>
+	</label>
+</relationship>
+
+<relationship name="house_room_outlet" type="rel1n" layers="0"
+	 src-col-pattern="{sc}_{st}"
+	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
+	 src-fk-pattern="{st}_fk"
+	 custom-color="#800a80"
+	 src-table="area.house_room"
+	 dst-table="area.outlet"
+	 src-required="false" dst-required="false"/>
+
+</dbmodel>
