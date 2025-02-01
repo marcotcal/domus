@@ -3,6 +3,7 @@ __pycache__/
 *.py[cod]
 database
 secrets.py
+github.txt
 
 # tests and coverage
 *.pytest_cache
