@@ -3,7 +3,7 @@
 CAUTION: Do not modify this file unless you know what you are doing.
  Unexpected results may occur if the code is changed deliberately.
 -->
-<dbmodel pgmodeler-ver="1.1.0-beta1" use-changelog="false" last-position="0,0" last-zoom="1" max-obj-count="7"
+<dbmodel pgmodeler-ver="1.1.0-beta1" use-changelog="false" last-position="0,35" last-zoom="1" max-obj-count="7"
 	 default-schema="public" default-owner="postgres"
 	 layers="Default layer"
 	 active-layers="0"
@@ -32,7 +32,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 <table name="relay_block" layers="0" collapse-mode="2" max-obj-count="4" z-value="0">
 	<schema name="relay_blocks"/>
 	<role name="marcotc"/>
-	<position x="300" y="720"/>
+	<position x="200" y="900"/>
 	<column name="code" not-null="true">
 		<type name="character varying" length="15"/>
 	</column>
@@ -56,7 +56,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 <table name="junction_box" layers="0" collapse-mode="2" max-obj-count="3" z-value="0">
 	<schema name="relay_blocks"/>
 	<role name="marcotc"/>
-	<position x="980" y="640"/>
+	<position x="1020" y="800"/>
 	<column name="code" not-null="true">
 		<type name="character varying" length="15"/>
 	</column>
@@ -104,7 +104,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 <table name="relay" layers="0" collapse-mode="2" max-obj-count="13" z-value="0">
 	<schema name="relay_blocks"/>
 	<role name="marcotc"/>
-	<position x="940" y="940"/>
+	<position x="980" y="1140"/>
 	<column name="code" not-null="true">
 		<type name="character varying" length="20"/>
 	</column>
@@ -158,7 +158,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 <table name="switch" layers="0" collapse-mode="2" max-obj-count="8" z-value="0">
 	<schema name="area"/>
 	<role name="marcotc"/>
-	<position x="620" y="320"/>
+	<position x="640" y="480"/>
 	<column name="code" not-null="true">
 		<type name="character varying" length="20"/>
 	</column>

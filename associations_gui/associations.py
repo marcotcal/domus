@@ -46,6 +46,11 @@ class Handler:
             if code_room in room_dict:
                 device_store.append(room_dict[code_room], [code, description]) 
 
+        cursor.execute("SELECT code_house_room, code, description FROM area.outlet ORDER BY code_house_room, code")
+        for code_room, code, description in cursor.fetchall():
+            if code_room in room_dict:
+                device_store.append(room_dict[code_room], [code, description]) 
+
         self.device_tree.set_model(device_store)
 
         for i, column_title in enumerate(["Código", "Descrição"]):
