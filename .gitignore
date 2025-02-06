@@ -19,6 +19,9 @@ venv
 
 # other
 .DS_Store
+domus_devel.dbm
+git_pull_domus.sh
+git_push_domus.sh
 
 # sphinx docs 
 _build
