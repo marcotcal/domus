@@ -9,9 +9,6 @@ import psycopg2.extras
 broker = 'homeassistant.local'
 port = 1883
 
-_STATUS = "outlet01/status" 
-_SET = "outlet01/set"
-
 _DEVICES = None
 
 # Generate a Client ID with the subscribe prefix.
