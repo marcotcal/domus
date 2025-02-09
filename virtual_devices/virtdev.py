@@ -125,7 +125,6 @@ if __name__ == '__main__':
                ,payload_off
                ,command_topic
                ,state_topic
-               ,alternate_status_topic
             FROM 
                 area.light_relay l
                 inner join relay_blocks.relay r ON r.code = l.code_relay
@@ -142,7 +141,6 @@ if __name__ == '__main__':
                ,payload_off
                ,command_topic
                ,state_topic
-               ,alternate_status_topic
             FROM 
                 area.outlet_relay o
                 inner join relay_blocks.relay r ON r.code = o.code_relay        
