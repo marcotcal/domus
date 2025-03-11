@@ -11,6 +11,7 @@ port = 1883
 
 _DEVICES = None
 _RELAYS = None
+_LIGHTS = None
 _STATUS = {}
 
 # Generate a Client ID with the subscribe prefix.
@@ -34,15 +35,15 @@ def connect_mqtt() -> mqtt_client:
 
 def subscribe(client: mqtt_client):
 
-    def on_message(client, userdata, msg):
-        print(f"Received `{msg.payload.decode()}` from `{msg.topic}` topic")
-
+    def on_message(client, userdata, msg):        
         for device in _DEVICES:
             set_cmd = device["command_topic"]
             status_cmd = device["state_topic"]
             payload_on = device["payload_on"]
-            payload_off = device["payload_off"]            
+            payload_off = device["payload_off"]        
+            device_type = device["device_type"]        
             if msg.topic == set_cmd:
+                print(f"Received set command `{msg.payload.decode()}` from `{msg.topic}` topic")
                 if msg.payload.decode() == payload_on:
                     client.publish(status_cmd ,payload_on) 
                     _STATUS[device["code"]] = True
@@ -61,11 +62,28 @@ def subscribe(client: mqtt_client):
                             relay_command = relay_device["command_topic"]
                             relay_payload = relay_device["payload_off"]
                             client.publish(relay_command, relay_payload) 
+            
+            if msg.topic == status_cmd:
+                if device_type == 'switch':
+                    print(f"Received status command `{msg.payload.decode()}` from `{msg.topic}` topic")
+                    for switch_light in _LIGHTS:
+                        if switch_light["code_switch"] == device["code"]:
+                            light_command = switch_light["command_topic"]
+                            if msg.payload.decode() == payload_on:
+                                light_payload = switch_light["payload_on"]
+                            else:
+                                light_payload = switch_light["payload_off"]
+                            client.publish(light_command,  light_payload)
+                            
 
     for device in _DEVICES:
         set_cmd = device["command_topic"]
         status_cmd = device["state_topic"]
-        client.subscribe(set_cmd)
+        device_type = device["device_type"]
+        if device_type == "switch":
+            client.subscribe(status_cmd)
+        else:    
+            client.subscribe(set_cmd)
         _STATUS[device['code']] = False
         client.publish(status_cmd,  'off')
 
@@ -92,6 +110,7 @@ if __name__ == '__main__':
                ,command_topic
                ,state_topic
                ,code_house_room
+               ,'light' AS device_type
             FROM area.light
             UNION 
             SELECT 
@@ -102,7 +121,19 @@ if __name__ == '__main__':
                ,command_topic
                ,state_topic
                ,code_house_room
+               ,'outlet' AS device_type
             FROM area.outlet
+            UNION 
+            SELECT 
+                code
+               ,description
+               ,payload_on
+               ,payload_off
+               ,command_topic
+               ,state_topic
+               ,code_house_room
+               ,'switch' AS device_type
+            FROM area.switch
         '''
 
         # create device dict
@@ -129,8 +160,30 @@ if __name__ == '__main__':
                 relay_blocks.devices_relays_view
         '''
 
+        # create relays dict
+
         cur.execute(sql) 
         _RELAYS = cur.fetchall()
+        
+        
+        sql = '''
+            SELECT 
+                code_switch,
+                code_light,
+                description,
+                payload_on,
+                payload_off,
+                command_topic,
+                state_topic,
+                code_house_room
+            FROM 
+                relay_blocks.switch_light_view
+        '''
+
+        # create lights dict
+
+        cur.execute(sql) 
+        _LIGHTS = cur.fetchall()
 
         cur.close()
         conn.close()
