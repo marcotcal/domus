@@ -1,8 +1,8 @@
 # byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
-database
 secrets.py
+database
 github.txt
 
 # tests and coverage
