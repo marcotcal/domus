@@ -8,14 +8,14 @@ from paho.mqtt import client as mqtt_client
 broker = 'homeassistant.local'
 port = 1883
 
-_CHANNEL_1 = 6
-_CHANNEL_2 = 5
-_CHANNEL_3 = 27
-_CHANNEL_4 = 22
-_CHANNEL_5 = 4
-_CHANNEL_6 = 25
-_CHANNEL_7 = 24
-_CHANNEL_8 = 23
+_CHANNEL_1 = 21 
+_CHANNEL_2 = 20
+_CHANNEL_3 = 16
+_CHANNEL_4 = 12
+_CHANNEL_5 = 26
+_CHANNEL_6 = 19
+_CHANNEL_7 = 13
+_CHANNEL_8 = 6
 
 _RELAY_BLOCK_ID = "relay_block_01"
 
