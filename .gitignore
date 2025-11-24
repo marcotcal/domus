@@ -1,6 +1,9 @@
 # byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
+secrets.py
+database
+github.txt
 
 # tests and coverage
 *.pytest_cache
@@ -16,6 +19,9 @@ venv
 
 # other
 .DS_Store
+domus_devel.dbm
+git_pull_domus.sh
+git_push_domus.sh
 
 # sphinx docs 
 _build
