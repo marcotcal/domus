@@ -17,7 +17,7 @@ _CHANNEL_6 = 19
 _CHANNEL_7 = 13
 _CHANNEL_8 = 6
 
-_RELAY_BLOCK_ID = "relay_block_01"
+_RELAY_BLOCK_ID = "relay_block_03"
 
 _STATUS_RELAY_1 = _RELAY_BLOCK_ID + "/status_relay1"
 _STATUS_RELAY_2 = _RELAY_BLOCK_ID + "/status_relay2" 
