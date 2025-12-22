@@ -4,7 +4,7 @@ __pycache__/
 secrets.py
 database
 github.txt
-
+*.bak
 # tests and coverage
 *.pytest_cache
 .coverage

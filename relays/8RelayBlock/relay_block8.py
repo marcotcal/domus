@@ -1,162 +1,148 @@
+#!/usr/bin/env python3
+
 import random
-import RPi.GPIO as GPIO
 import sys
+import time
+import ssl
 import secrets
+import RPi.GPIO as GPIO
 from paho.mqtt import client as mqtt_client
 
+# =========================================================
+# MQTT CONFIG
+# =========================================================
+BROKER = MQTT_BROKER 
+PORT = MQTT_PORT
+CA_CERT = "/etc/mqtt/ca.crt"
 
-broker = 'homeassistant.local'
-port = 1883
+CLIENT_ID = f"relay-block-8-{random.randint(1000,9999)}"
+USERNAME = secrets.MQTT_USER
+PASSWORD = secrets.MQTT_PASSWORD
 
-_CHANNEL_1 = 21 
-_CHANNEL_2 = 20
-_CHANNEL_3 = 16
-_CHANNEL_4 = 12
-_CHANNEL_5 = 26
-_CHANNEL_6 = 19
-_CHANNEL_7 = 13
-_CHANNEL_8 = 6
+RELAY_BLOCK_ID = "relay_block_01"
 
-_RELAY_BLOCK_ID = "relay_block_03"
+# =========================================================
+# GPIO CONFIG
+# =========================================================
+GPIO.setmode(GPIO.BCM)
 
-_STATUS_RELAY_1 = _RELAY_BLOCK_ID + "/status_relay1"
-_STATUS_RELAY_2 = _RELAY_BLOCK_ID + "/status_relay2" 
-_STATUS_RELAY_3 = _RELAY_BLOCK_ID + "/status_relay3"
-_STATUS_RELAY_4 = _RELAY_BLOCK_ID + "/status_relay4"
-_STATUS_RELAY_5 = _RELAY_BLOCK_ID + "/status_relay5"
-_STATUS_RELAY_6 = _RELAY_BLOCK_ID + "/status_relay6"
-_STATUS_RELAY_7 = _RELAY_BLOCK_ID + "/status_relay7"
-_STATUS_RELAY_8 = _RELAY_BLOCK_ID + "/status_relay8"
+RELAYS = {
+    "relay1": 21,
+    "relay2": 20,
+    "relay3": 16,
+    "relay4": 12,
+    "relay5": 26,
+    "relay6": 19,
+    "relay7": 13,
+    "relay8": 6,
+}
 
-_SET_RELAY_1 = _RELAY_BLOCK_ID + "/set_relay1"
-_SET_RELAY_2 = _RELAY_BLOCK_ID + "/set_relay2" 
-_SET_RELAY_3 = _RELAY_BLOCK_ID + "/set_relay3"
-_SET_RELAY_4 = _RELAY_BLOCK_ID + "/set_relay4"
-_SET_RELAY_5 = _RELAY_BLOCK_ID + "/set_relay5"
-_SET_RELAY_6 = _RELAY_BLOCK_ID + "/set_relay6"
-_SET_RELAY_7 = _RELAY_BLOCK_ID + "/set_relay7"
-_SET_RELAY_8 = _RELAY_BLOCK_ID + "/set_relay8"
+for pin in RELAYS.values():
+    GPIO.setup(pin, GPIO.OUT)
+    GPIO.output(pin, GPIO.LOW)
 
-# Generate a Client ID with the subscribe prefix.
-client_id = f'subscribe-{random.randint(0, 100)}'
-username = secrets.MQTT_USER 
-password = secrets.MQTT_PASSWORD
+# =========================================================
+# MQTT CALLBACKS — API v2
+# =========================================================
+def on_connect(client, userdata, flags, reason_code, properties):
+    if reason_code == 0:
+        print("✅ Connected to MQTT broker (TLS)")
+        subscribe_topics(client)
+        publish_all_status(client)
+        client.publish(f"{RELAY_BLOCK_ID}/availability", "online", retain=True)
+    else:
+        print(f"❌ MQTT connection failed, reason_code={reason_code}")
 
-def connect_mqtt() -> mqtt_client:
-    def on_connect(client, userdata, flags, rc):
-        if rc == 0:
-            print("Connected to MQTT Broker!")
-        else:
-            print("Failed to connect, return code %d\n", rc)
+def on_disconnect(client, userdata, reason_code, properties=None, *args, **kwargs):
+    print(f"⚠️ MQTT disconnected (reason_code={reason_code})")
 
-    client = mqtt_client.Client(client_id)
-    client.username_pw_set(username, password)
+def on_message(client, userdata, msg):
+    topic = msg.topic
+    payload = msg.payload.decode().lower()
+
+    for relay, pin in RELAYS.items():
+        set_topic = f"{RELAY_BLOCK_ID}/set_{relay}"
+        status_topic = f"{RELAY_BLOCK_ID}/status_{relay}"
+
+        if topic == set_topic:
+            if payload == "on":
+                GPIO.output(pin, GPIO.HIGH)
+                client.publish(status_topic, "on", retain=True)
+            else:
+                GPIO.output(pin, GPIO.LOW)
+                client.publish(status_topic, "off", retain=True)
+
+            print(f"🔌 {relay} -> {payload}")
+
+# =========================================================
+# MQTT HELPERS
+# =========================================================
+def subscribe_topics(client):
+    for relay in RELAYS.keys():
+        topic = f"{RELAY_BLOCK_ID}/set_{relay}"
+        client.subscribe(topic)
+        print(f"📡 Subscribed to {topic}")
+
+def publish_all_status(client):
+    for relay, pin in RELAYS.items():
+        status_topic = f"{RELAY_BLOCK_ID}/status_{relay}"
+        state = "on" if GPIO.input(pin) == GPIO.HIGH else "off"
+        client.publish(status_topic, state, retain=True)
+
+# =========================================================
+# MQTT CLIENT SETUP — API v2 (COMPATÍVEL)
+# =========================================================
+def connect_mqtt():
+    client = mqtt_client.Client(
+        client_id=CLIENT_ID,
+        protocol=mqtt_client.MQTTv311,
+        callback_api_version=mqtt_client.CallbackAPIVersion.VERSION2
+    )
+
+    client.username_pw_set(USERNAME, PASSWORD)
+
+    client.tls_set(
+        ca_certs=CA_CERT,
+        tls_version=ssl.PROTOCOL_TLS_CLIENT
+    )
+    client.tls_insecure_set(False)
+
+    # Last Will
+    client.will_set(
+        f"{RELAY_BLOCK_ID}/availability",
+        payload="offline",
+        qos=1,
+        retain=True
+    )
+
     client.on_connect = on_connect
-    client.connect(broker, port)
-    return client
-
-
-def subscribe(client: mqtt_client):
-
-    def on_message(client, userdata, msg):
-        print(f"Received `{msg.payload.decode()}` from `{msg.topic}` topic")
-        if msg.topic == _SET_RELAY_1:
-            if msg.payload.decode() == "on":
-                GPIO.output(_CHANNEL_1,GPIO.HIGH)
-                client.publish(_STATUS_RELAY_1,"on") 
-            else:     
-                GPIO.output(_CHANNEL_1,GPIO.LOW)
-                client.publish(_STATUS_RELAY_1,"off") 
-
-        if msg.topic == _SET_RELAY_2:
-            if msg.payload.decode() == "on":
-                GPIO.output(_CHANNEL_2,GPIO.HIGH)
-                client.publish(_STATUS_RELAY_2,"on") 
-            else:     
-                GPIO.output(_CHANNEL_2,GPIO.LOW)
-                client.publish(_STATUS_RELAY_2,"off") 
-
-        if msg.topic == _SET_RELAY_3:
-            if msg.payload.decode() == "on":
-                GPIO.output(_CHANNEL_3,GPIO.HIGH)
-                client.publish(_STATUS_RELAY_3,"on") 
-            else:     
-                GPIO.output(_CHANNEL_3,GPIO.LOW)
-                client.publish(_STATUS_RELAY_3,"off") 
-
-        if msg.topic == _SET_RELAY_4:
-            if msg.payload.decode() == "on":
-                GPIO.output(_CHANNEL_4,GPIO.HIGH)
-                client.publish(_STATUS_RELAY_4,"on") 
-            else:     
-                GPIO.output(_CHANNEL_4,GPIO.LOW)
-                client.publish(_STATUS_RELAY_4,"off") 
-
-        if msg.topic == _SET_RELAY_5:
-            if msg.payload.decode() == "on":
-                GPIO.output(_CHANNEL_5,GPIO.HIGH)
-                client.publish(_STATUS_RELAY_5,"on") 
-            else:     
-                GPIO.output(_CHANNEL_5,GPIO.LOW)
-                client.publish(_STATUS_RELAY_5,"off") 
-
-        if msg.topic == _SET_RELAY_6:
-            if msg.payload.decode() == "on":
-                GPIO.output(_CHANNEL_6,GPIO.HIGH)
-                client.publish(_STATUS_RELAY_6,"on") 
-            else:     
-                GPIO.output(_CHANNEL_6,GPIO.LOW)
-                client.publish(_STATUS_RELAY_6,"off") 
-
-        if msg.topic == _SET_RELAY_7:
-            if msg.payload.decode() == "on":
-                GPIO.output(_CHANNEL_7,GPIO.HIGH)
-                client.publish(_STATUS_RELAY_7,"on") 
-            else:     
-                GPIO.output(_CHANNEL_7,GPIO.LOW)
-                client.publish(_STATUS_RELAY_7,"off") 
-
-        if msg.topic == _SET_RELAY_8:
-            if msg.payload.decode() == "on":
-                GPIO.output(_CHANNEL_8,GPIO.HIGH)
-                client.publish(_STATUS_RELAY_8,"on") 
-            else:     
-                GPIO.output(_CHANNEL_8,GPIO.LOW)
-                client.publish(_STATUS_RELAY_8,"off") 
-
-    client.subscribe(_SET_RELAY_1)
-    client.subscribe(_SET_RELAY_2)
-    client.subscribe(_SET_RELAY_3)
-    client.subscribe(_SET_RELAY_4)
-    client.subscribe(_SET_RELAY_5)
-    client.subscribe(_SET_RELAY_6)
-    client.subscribe(_SET_RELAY_7)
-    client.subscribe(_SET_RELAY_8)
-
+    client.on_disconnect = on_disconnect
     client.on_message = on_message
 
+    client.connect(BROKER, PORT, keepalive=60)
+    return client
 
+# =========================================================
+# MAIN
+# =========================================================
 def run():
-    client = connect_mqtt()
-    subscribe(client)
-    client.loop_forever()
-
-
-if __name__ == '__main__':
-    GPIO.setmode(GPIO.BCM)
-    GPIO.setup(_CHANNEL_1,GPIO.OUT)
-    GPIO.setup(_CHANNEL_2,GPIO.OUT)
-    GPIO.setup(_CHANNEL_3,GPIO.OUT)
-    GPIO.setup(_CHANNEL_4,GPIO.OUT)
-    GPIO.setup(_CHANNEL_5,GPIO.OUT)
-    GPIO.setup(_CHANNEL_6,GPIO.OUT)
-    GPIO.setup(_CHANNEL_7,GPIO.OUT)
-    GPIO.setup(_CHANNEL_8,GPIO.OUT)
+    while True:
+        try:
+            client = connect_mqtt()
+            client.loop_forever()  # permanece ativo
+        except Exception as e:
+            print(f"⚠️ Conexão MQTT falhou: {e}")
+            print("🔄 Tentando reconectar em 5 segundos...")
+            time.sleep(5)
+    
+# =========================================================
+# ENTRY POINT
+# =========================================================
+if __name__ == "__main__":
     try:
         run()
     except KeyboardInterrupt:
-        print("\nUser interruption\nBye")
+        print("\n👋 Interrupted by user, cleaning up GPIO")
         GPIO.cleanup()
-        sys.exit()
-
+        sys.exit(0)
 
