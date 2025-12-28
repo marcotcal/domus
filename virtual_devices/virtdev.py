@@ -27,6 +27,7 @@ PASSWORD = secrets.MQTT_PASSWORD
 _DEVICES = []
 _RELAYS = []
 _LIGHTS = []
+_SWITCHES = []
 _STATUS = {}
 
 # =========================
@@ -78,6 +79,19 @@ def on_message(client, userdata, msg):
                         else relay["payload_off"]
                     )
                     client.publish(relay_cmd, relay_payload)
+
+                    # check switches
+
+                    for switch in _LIGHTS:
+                        if switch['code_light'] == device_code:
+                            print('update switch', switch['code_switch'], ' payload: ', payload)
+                            switch_rec = next(
+                                (item for item in _SWITCHES if item.get("code") == switch['code_switch']),
+                                None
+                            )
+                            if switch_rec is not None:
+                                client.publish(switch_rec["update_topic"], payload)
+
 
         # =========================
         # STATUS COMMAND (switch → light)
@@ -144,7 +158,7 @@ def subscribe_topics(client):
 # DATABASE LOAD
 # =========================
 def load_data():
-    global _DEVICES, _RELAYS, _LIGHTS
+    global _DEVICES, _RELAYS, _LIGHTS, _SWITCHES
 
     conn = psycopg2.connect(
         host=secrets.HOST,
@@ -198,6 +212,23 @@ def load_data():
         """
     )
     _LIGHTS = cur.fetchall()
+
+    cur.execute(
+        """
+        SELECT 
+            code
+           ,description
+           ,payload_on
+           ,payload_off
+           ,command_topic
+           ,state_topic
+           ,code_house_room
+           ,update_topic
+        FROM area.switch
+        ORDER BY code
+        """
+    )
+    _SWITCHES = cur.fetchall()
 
     cur.close()
     conn.close()
