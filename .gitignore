@@ -2,6 +2,7 @@
 __pycache__/
 *.py[cod]
 secrets.py
+secrets.h
 database
 github.txt
 *.bak
