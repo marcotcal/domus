@@ -28,6 +28,42 @@ String mqtt_user    = "";
 String mqtt_pass    = "";
 String mqtt_ssl_tls = "on";            // "on" ou "off"
 
+// CHANGE FOR YOUR CERTIFICATE 
+
+static const char mqtt_ca_cert[] PROGMEM = R"EOF(
+-----BEGIN CERTIFICATE-----
+MIIFAzCCAuugAwIBAgIUfta9J9b8LeMEoTBqz04tjrV3ZYMwDQYJKoZIhvcNAQEL
+BQAwEDEOMAwGA1UEAwwFTWFyY28wIBcNMjUxMjEzMjI0NTQwWhgPMjEyNTExMTky
+MjQ1NDBaMBAxDjAMBgNVBAMMBU1hcmNvMIICIjANBgkqhkiG9w0BAQEFAAOCAg8A
+MIICCgKCAgEAkQqEUT3k+/q3MIzHC23vvJrLXu9Uk3PgsBj2DqXGhuQnT23mg3C5
+kxEYmVUC7T89FDuDnFVDLcbm57vcjCF5BIPv1ely4pAYIdoKwLyCSKU8nYzjMScf
+XSF405qSkmJ8eJlmMgSXqgW0ZSOSlSdyJncUc71DJ0FL8q753vRJB4mfaYiWlqaT
+fouqdzO93KSnnDBIPIdTR8oOLbjWi/heKfExzLr+dat9pCm21469jsMGQKJdBxlZ
+c09D99JYpWPPRFrjx2bqmsLU8QKCy5iUIqH0ba6HQOkg+NbzatfOcBy4mdo/EANM
+bGbO6wNN7VM171Hqstc89MY2e1Tr+GEGPz0VJlzbr9WkAGM8DnLfc+Ezddjba94x
+qYKeFvyDHOI6hKxmJ2DriKo6/No9CxqrzwpYJF0qfn85jnBxWG7bjZmhWmixn8Jm
+pgqjU1mzupt50mHhBLkm1tvcgDStcrVHEyzIsTOs0YS5yrGSwyUquGZO/i+9gqHV
+A+btDWS8MkUdcZsxytSxMd3d+U+R911UYV4LUkOu+JauJg2cvaHuIvuPnkIdwb7Q
+Y+MIts100au+xGDI/SP56Qq7gD2QTz7eD/efRtmZOAULwrzJswi/VE9wgP4Rsrk2
+3qWgLc1dVj582CIRCrsR+pSby+mNECcH4iYw22WB+qzq1Jh8PUBe9fMCAwEAAaNT
+MFEwHQYDVR0OBBYEFNGAR+52DV2sS7/4csbD0+bubupkMB8GA1UdIwQYMBaAFNGA
+R+52DV2sS7/4csbD0+bubupkMmmDA1UdEwEB/wQFMAMBAf8wDQYJKoZIhvcNAQEL
+BQADggIBAHKerU5G9fcZv+pK7ZU/J0BDUwRyQCVl+YD8OMkSEnxUM3aOEovxinGL
+3O7kPbaad8thxW6pb0YlVsve3B4/w19aBp2rvfrZ3+OCpEuE/WbVng46mZno0rFt
+WTj/JkxwWOQwWMOYk4ts5jjXALpFOxnw8rTj3U9AKa3wc4dh0sB2Q1m2FiAGuhbg
+b9GzMWR5bUfLvt+pESHHZEoZGKnYw6N/FdpLmz8sJ9p4yWQTV6n2z56fowjq0Mtk
+QH3YvqamAkMUziKXZMH41ygOG6xzluBN8OPxn+MC8Gq7pV/RqY4Dv9cOuxIhWhlS
+3B1wBjHRaSpyOnOjyGjlcddgr0ND3uSCWy/KWOfhq2WK6VvBR7S8AS9tvvCPMkFm
+g7rxDVkY6fwVQCtlFZDXRN6tVyI0uNHcIX3eR4zXb1rWQdLVxmh9Ysm+CluHmBCh
+QdgrdXDoY6ICJ1OKOIxYh7Q67dm7dBEj/mMfYgACZX5Bzg0OqR17F8PI9QBBzlrE
+qPXsQU+PBKhVaM34Zp8Dp+VeXxacParm8edjkFQtM1SRYKAx5ahwHlyd1j2gjjDt
+SeYKEyqUkQz3DrJXnG0+LHuWtcM7pTSCvebKSxUJDWUkwrcA2+65dl7iPT15OyON
+B+NOeA4+ckRCSjfhviSBhlb5e86dYOyvaVfxHNi1CJ74MINosCNM
+-----END CERTIFICATE-----
+)EOF";
+
+
+
 
 end of security.h declarations 
 
@@ -82,41 +118,6 @@ String switch_topic_updateD = switch_id + "/switch_updateD";
 String register_topic = "register";
 String who_am_i_topic = "who_am_i";
 
-
-/* =====================================================
-   CERTIFICADO CA (TROCA AQUI)
-   ===================================================== */
-static const char mqtt_ca_cert[] PROGMEM = R"EOF(
------BEGIN CERTIFICATE-----
-MIIFAzCCAuugAwIBAgIUfta9J9b8LeMEoTBqz04tjrV3ZYMwDQYJKoZIhvcNAQEL
-BQAwEDEOMAwGA1UEAwwFTWFyY28wIBcNMjUxMjEzMjI0NTQwWhgPMjEyNTExMTky
-MjQ1NDBaMBAxDjAMBgNVBAMMBU1hcmNvMIICIjANBgkqhkiG9w0BAQEFAAOCAg8A
-MIICCgKCAgEAkQqEUT3k+/q3MIzHC23vvJrLXu9Uk3PgsBj2DqXGhuQnT23mg3C5
-kxEYmVUC7T89FDuDnFVDLcbm57vcjCF5BIPv1ely4pAYIdoKwLyCSKU8nYzjMScf
-XSF405qSkmJ8eJlmMgSXqgW0ZSOSlSdyJncUc71DJ0FL8q753vRJB4mfaYiWlqaT
-fouqdzO93KSnnDBIPIdTR8oOLbjWi/heKfExzLr+dat9pCm21469jsMGQKJdBxlZ
-c09D99JYpWPPRFrjx2bqmsLU8QKCy5iUIqH0ba6HQOkg+NbzatfOcBy4mdo/EANM
-bGbO6wNN7VM171Hqstc89MY2e1Tr+GEGPz0VJlzbr9WkAGM8DnLfc+Ezddjba94x
-qYKeFvyDHOI6hKxmJ2DriKo6/No9CxqrzwpYJF0qfn85jnBxWG7bjZmhWmixn8Jm
-pgqjU1mzupt50mHhBLkm1tvcgfUvcrVHEyzIsTOs0YS5yrGSwyUquGZO/i+9gqHV
-A+btDWS8MkUdcZsxytSxMd3d+U+R911UYV4LUkOu+JauJg2cvaHuIvuPnkIdwb7Q
-Y+MIts100au+xGDI/SP56Qq7gD2QTz7eD/efRtmZOAULwrzJswi/VE9wgP4Rsrk2
-3qWgLc1dVj582CIRCrsR+pSby+mNECcH4iYw22WB+qzq1Jh8PUBe9fMCAwEAAaNT
-MFEwHQYDVR0OBBYEFNGAR+52DV2sS7/4csbD0+bubupkMB8GA1UdIwQYMBaAFNGA
-R+52DV2sS7/4csbD0+bubupkMA8GA1UdEwEB/wQFMAMBAf8wDQYJKoZIhvcNAQEL
-BQADggIBAHKerU5G9fcZv+pK7ZU/J0BDUwRyQCVl+YD8OMkSEnxUM3aOEovxinGL
-3O7kPbaad8thxW6pb0YlVsve3B4/w19aBp2rvfrZ3+OCpEuE/WbVng46mZno0rFt
-WTj/JkxwWOQwWMOYk4ts5jjXALpFOxnw8rTj3U9AKa3wc4dh0sB2Q1m2FiAGuhbg
-b9GzMWR5bUfLvt+pESHHZEoZGKnYw6N/FdpLmz8sJ9p4yWQTV6n2z56fowjq0Mtk
-QH3YvqamAkMUziKXZMH41ygOG6xzluBN8OPxn+MC8Gq7pV/RqY4Dv9cOuxIhWhlS
-3B1wBjHRaSpyOnOjyGjlcddgr0ND3uSCWy/KWOfhq2WK6VvBR7S8AS9tvvCPMkFm
-g7rxDVkY6fwVQCtlFZDXRN6tVyI0uNHcIX3eR4zXb1rWQdLVxmh9Ysm+CluHmBCh
-QdgrdXDoY6ICJ1OKOIxYh7Q67dm7dBEj/mMfYgACZX5Bzg0OqR17F8PI9QBBzlrE
-qPXsQU+PBKhVaM34Zp8Dp+VeXxacParm8edjkFQtM1SRYKAx5ahwHlyd1j2gjjDt
-SeYKEyqUkQz3DrJXnG0+LHuWtcM7pTSCvebKSxUJDWUkwrcA2+65dl7iPT15OyON
-B+NOeA4+ckRCSjfhviSBhlb5e86dYOyvaVfxHNi1CJ74MINosCNM
------END CERTIFICATE-----
-)EOF";
 
 /* =====================================================
    OBJETOS GLOBAIS
