@@ -62,9 +62,6 @@ B+NOeA4+ckRCSjfhviSBhlb5e86dYOyvaVfxHNi1CJ74MINosCNM
 -----END CERTIFICATE-----
 )EOF";
 
-
-
-
 end of security.h declarations 
 
 */
