@@ -7,6 +7,8 @@
 #include <time.h>
 #include <FS.h>
 #include <Bounce2.h>
+#include <LittleFS.h>
+#include <ArduinoJson.h>
 #include "secrets.h"
 
 /* =====================================================
@@ -18,12 +20,15 @@
 String device_mode = "operational";   // "operational" ou "setup"
 
 // -------- WIFI --------
-String ssid = "";
+
+// initial AP configuration
+String ssid = "DOMUS-SWITCH";
 String password = "";
+IPAddress   apIP(192, 168, 4, 200);
 
 // -------- MQTT --------
 String mqtt_server  = "";
-int    mqtt_port    = 8883;
+unsigned int mqtt_port    = 8883;
 String mqtt_user    = "";
 String mqtt_pass    = "";
 String mqtt_ssl_tls = "on";            // "on" ou "off"
@@ -66,10 +71,22 @@ end of security.h declarations
 
 */
 
+//----------CONFIGURATION ----------
+
+struct Config {
+  String switch_id;
+  String ssid;
+  String password;
+  String mqtt_server;
+  unsigned int mqtt_port;
+  bool mqtt_use_ssl;
+  String mqtt_user;
+  String mqtt_password; 
+} config;
+
 // -------- DEVICE --------
 
-String switch_id =  "switch001";
-// String switch_id =  "switch-" + String(random(0xffff), HEX);
+String switch_id =  "switch-" + String(random(0xffff), HEX);
 bool registered = false;
 
 
@@ -115,6 +132,28 @@ String switch_topic_updateD = switch_id + "/switch_updateD";
 String register_topic = "register";
 String who_am_i_topic = "who_am_i";
 
+/* =====================================================
+   
+   ===================================================== */
+
+void initiateTopics() {
+
+  status_topicA = switch_id + "/switch_statusA";
+  status_topicB = switch_id + "/switch_statusB";
+  status_topicC = switch_id + "/switch_statusC";
+  status_topicD = switch_id + "/switch_statusD";
+  
+  switch_topicA = switch_id + "/switchA";
+  switch_topicB = switch_id + "/switchB";
+  switch_topicC = switch_id + "/switchC";
+  switch_topicD = switch_id + "/switchD";
+  
+  switch_topic_updateA = switch_id + "/switch_updateA";
+  switch_topic_updateB = switch_id + "/switch_updateB";
+  switch_topic_updateC = switch_id + "/switch_updateC";
+  switch_topic_updateD = switch_id + "/switch_updateD";
+  
+}
 
 /* =====================================================
    OBJETOS GLOBAIS
@@ -126,6 +165,71 @@ BearSSL::X509List caCert(mqtt_ca_cert);
 PubSubClient client;
 
 ESP8266WebServer server(80);
+
+/* =====================================================
+    SETUP CONFIGURATION SAVE AND RESTORE 
+   ===================================================== */
+
+void saveConfig() {
+  StaticJsonDocument<256> doc;
+  doc["switch_id"] = config.switch_id;
+  doc["SSID"] = config.ssid;
+  doc["password"] = config.password;
+  doc["MQTT_server"] = config.mqtt_server;
+  doc["MQTT_port"] = String(config.mqtt_port);
+
+  if (config.mqtt_use_ssl)
+    doc["MQTT_use_ssl"] = "on";
+  else  
+    doc["MQTT_use_ssl"] = "off";
+
+  doc["MQTT_user"] = config.mqtt_user; 
+  doc["MQTT_password"] = config.mqtt_password;  
+
+  File f = LittleFS.open("/config.json", "w");
+  serializeJson(doc, f);
+  f.close();
+}
+
+bool readConfig() {
+  if (!LittleFS.begin()) {
+    Serial.println("Error mounting LittleFS");
+    return false;
+  }
+
+  if (!LittleFS.exists("/config.json")) {
+    Serial.println("configuration does not exists");
+    return false;
+  }
+
+  File file = LittleFS.open("/config.json", "r");
+  if (!file) {
+    Serial.println("Cannot read configuration");
+    return false;
+  }
+
+  StaticJsonDocument<256> doc;
+  DeserializationError error = deserializeJson(doc, file);
+  file.close();
+
+  if (error) {
+    Serial.print("❌JSON error: ");
+    Serial.println(error.c_str());
+    return false;
+  }
+
+  config.switch_id = doc["switch_id"] | "";
+  config.ssid = doc["SSID"] | "";
+  config.password = doc["password"] | "";
+  config.mqtt_server = doc["MQTT_server"] | "";
+  config.mqtt_port = doc["MQTT_port"]  | 8883;
+  config.mqtt_user = doc["MQTT_user"] | "";
+  config.mqtt_password = doc["MQTT_password"] | "";
+  config.mqtt_use_ssl = (doc["MQTT_use_ssl"] == "on");
+  
+  Serial.println("Config loaded");
+  return true;
+}
 
 /* =====================================================
    HTTP Handlers
@@ -238,12 +342,14 @@ void register_form() {
 }
 
 void handle_form() {
-  String new_id = server.arg("switch_id");
+  
+  String switch_id = server.arg("switch_id");
   String operational_ssid = server.arg("ssid"); 
   String operational_password = server.arg("password"); 
   String mqtt_broker = server.arg("mqtt_broker"); 
   String mqtt_port = server.arg("mqtt_port");
   String mqtt_user = server.arg("mqtt_user"); 
+  String mqtt_ssl_tls = server.arg("mqtt_ssl_tls"); 
   String mqtt_password = server.arg("mqtt_password"); 
   
   // Serial.print("SSID:");
@@ -254,23 +360,18 @@ void handle_form() {
   
   String s = "<a href='/'> Go Back </a>";
 
-  String text_to_save = operational_ssid + ":" + operational_password + ":" + mqtt_broker + ":" + mqtt_port + ":" + mqtt_user + ":" + mqtt_password + ":" + new_id;
+  config.switch_id = switch_id;
+  config.ssid = operational_ssid;
+  config.password = operational_password;
+  config.mqtt_server = mqtt_broker;
+  config.mqtt_user = mqtt_user;
+  config.mqtt_use_ssl = (mqtt_ssl_tls == "on");
+  config.mqtt_password = mqtt_password;
 
   if (operational_ssid == "" || mqtt_broker == "" || mqtt_user == "") {
-
-    s = "<a href='/'> Nothing done! ssid, mqtt broker or mqtt user not informed. Go Back </a>";
-    
+    s = "<a href='/'> Nothing done! ssid, mqtt broker or mqtt user not informed. Go Back </a>";    
   } else {
-
-    Dir dir = SPIFFS.openDir("/");
-    File config_file = SPIFFS.open(F("/config.txt"),"w");
-    if (config_file) {
-      config_file.print(text_to_save.c_str());
-      config_file.close();
-      // Serial.print("Saved file with : " + text_to_save);
-    } else {      
-      // Serial.print("Problem creating file");
-    }
+    saveConfig();
   }  
   
   server.send(200, "text/html", s); //Send web page
@@ -307,6 +408,7 @@ void startAP() {
 
   WiFi.mode(WIFI_AP);
   WiFi.softAP("DOMUS-SWITCH");
+  WiFi.softAPConfig(apIP, apIP, IPAddress(255, 255, 255, 0));
 
   Serial.println("AP MODE ACTIVE");
   Serial.print("AP IP: ");
@@ -400,6 +502,8 @@ void mqttCallback(char* topic, byte* payload, unsigned int length) {
     PayLoadStr += (char)payload[i];
   }
   Serial.println();
+
+  // Serial.println(PayLoadStr);
 
   if (strcmp(topic, "who_am_i") == 0) {
 
@@ -505,59 +609,55 @@ void mqttCallback(char* topic, byte* payload, unsigned int length) {
 
 void reconnect_mqtt() {
 
-  if (WiFi.status() != WL_CONNECTED) return;
+  Serial.print("Connecting MQTT... ");
 
-  while (!client.connected()) {
+  if (client.connect(
+        switch_id.c_str(),
+        mqtt_user.c_str(),
+        mqtt_pass.c_str())) {
 
-    Serial.print("Connecting MQTT... ");
+    // Once connected, publish an announcement...
+    
+    client.publish(status_topicA.c_str(), "off");
+    client.publish(status_topicB.c_str(), "off");
+    client.publish(status_topicC.c_str(), "off");
+    client.publish(status_topicD.c_str(), "off");
 
-    if (client.connect(
-          switch_id.c_str(),
-          mqtt_user.c_str(),
-          mqtt_pass.c_str())) {
+    Serial.println("Published " + status_topicA);
+    Serial.println("Published " + status_topicB);
+    Serial.println("Published " + status_topicC);
+    Serial.println("Published " + status_topicD);
 
-      // Once connected, publish an announcement...
-      
-      client.publish(status_topicA.c_str(), "off");
-      client.publish(status_topicB.c_str(), "off");
-      client.publish(status_topicC.c_str(), "off");
-      client.publish(status_topicD.c_str(), "off");
+    // ... and resubscribe
+    client.subscribe(switch_topicA.c_str());
+    client.subscribe(switch_topicB.c_str());
+    client.subscribe(switch_topicC.c_str());
+    client.subscribe(switch_topicD.c_str());
 
-      Serial.println("Published " + status_topicA);
-      Serial.println("Published " + status_topicB);
-      Serial.println("Published " + status_topicC);
-      Serial.println("Published " + status_topicD);
-  
-      // ... and resubscribe
-      client.subscribe(switch_topicA.c_str());
-      client.subscribe(switch_topicB.c_str());
-      client.subscribe(switch_topicC.c_str());
-      client.subscribe(switch_topicD.c_str());
+    client.subscribe(switch_topic_updateA.c_str());
+    client.subscribe(switch_topic_updateB.c_str());
+    client.subscribe(switch_topic_updateC.c_str());
+    client.subscribe(switch_topic_updateD.c_str());
+          
+    client.subscribe(who_am_i_topic.c_str());
+    
+    Serial.println("Subscribed " + switch_topicA);
+    Serial.println("Subscribed " + switch_topicB);
+    Serial.println("Subscribed " + switch_topicC);
+    Serial.println("Subscribed " + switch_topicD);
 
-      client.subscribe(switch_topic_updateA.c_str());
-      client.subscribe(switch_topic_updateB.c_str());
-      client.subscribe(switch_topic_updateC.c_str());
-      client.subscribe(switch_topic_updateD.c_str());
-            
-      client.subscribe(who_am_i_topic.c_str());
-      
-      Serial.println("Subscribed " + switch_topicA);
-      Serial.println("Subscribed " + switch_topicB);
-      Serial.println("Subscribed " + switch_topicC);
-      Serial.println("Subscribed " + switch_topicD);
+    Serial.println("Subscribed " + switch_topic_updateA);
+    Serial.println("Subscribed " + switch_topic_updateB);
+    Serial.println("Subscribed " + switch_topic_updateC);
+    Serial.println("Subscribed " + switch_topic_updateD);
 
-      Serial.println("Subscribed " + switch_topic_updateA);
-      Serial.println("Subscribed " + switch_topic_updateB);
-      Serial.println("Subscribed " + switch_topic_updateC);
-      Serial.println("Subscribed " + switch_topic_updateD);
+  } else {
 
-    } else {
-
-      Serial.print("FAIL rc=");
-      Serial.println(client.state());
-      delay(3000);
-    }
+    Serial.print("FAIL rc=");
+    Serial.println(client.state());
+    delay(3000);
   }
+
 }
 
 /* =====================================================
@@ -583,17 +683,63 @@ void setup() {
   server.begin();
   Serial.println("HTTP Server Started");
 
+  // clean old config if needed 
   //SPIFFS.begin();
+  //Dir dir = SPIFFS.openDir("/");
+  // forçar reset
+  //SPIFFS.remove(F("/config.txt"));
 
-  setup_wifi();
+  if (readConfig()) {
+    
+    device_mode = "operational";
 
-  if (WiFi.status() == WL_CONNECTED) {
-    syncTime();  
-    setup_mqtt();
-    client.setCallback(mqttCallback);
-    registered = false; 
+    switch_id = config.switch_id;
+    ssid = config.ssid;
+    password = config.password;
+    mqtt_server = config.mqtt_server;
+    mqtt_user = config.mqtt_user;
+    mqtt_pass = config.mqtt_password;
+    mqtt_port = config.mqtt_port;
+    if (config.mqtt_use_ssl)
+      mqtt_ssl_tls = "on";
+    else
+      mqtt_ssl_tls = "off";
+
+    initiateTopics();
+      
+    /*  
+    Serial.print("Config Switch Id :");
+    Serial.println(config.switch_id);
+    Serial.print("Config SSID :");
+    Serial.println(config.ssid);
+    Serial.print("Config password :");
+    Serial.println(config.password);
+    Serial.print("Config Broker :");
+    Serial.println(config.mqtt_server);
+    Serial.print("Config mqtt user :");
+    Serial.println(config.mqtt_user);
+    Serial.print("Config mqtt password :");
+    Serial.println(config.mqtt_password);
+    Serial.print("Config mqtt port :");
+    Serial.println(config.mqtt_port);
+    Serial.print("Config mqtt use ssl :");
+    */
+    
+    setup_wifi();  
+
+    if (WiFi.status() == WL_CONNECTED) {
+      syncTime();  
+      setup_mqtt();
+      client.setCallback(mqttCallback);
+      registered = false; 
+    }
+  
+  } else {
+
+    device_mode = "setup";
+    startAP();
   }
-
+  
   pinMode(BUTTON_A, INPUT);      
   pinMode(BUTTON_B, INPUT);
   pinMode(BUTTON_C, INPUT);
@@ -615,7 +761,8 @@ void setup() {
   is_onA = false;
   is_onB = false;
   is_onC = false;
-  is_onD = false;
+  is_onD = false;    
+
 }
 
 /* =====================================================
@@ -631,100 +778,101 @@ void loop() {
   debouncerC.update();
   debouncerD.update();
    
-  //debouncerReset.update();
+  debouncerReset.update();
 
-  if (WiFi.status() != WL_CONNECTED) {
-    delay(1000);
-    return;
-  }
-
-  if (!client.connected()) {
-    reconnect_mqtt();
-  }
-
-  client.loop();
-
-  if (!registered) {
-    register_msg = switch_id + "," + WiFi.localIP().toString();
-    client.publish(register_topic.c_str(), register_msg.c_str());
+  if(device_mode == "operational") {
     
-    // Serial.println("Register: " + register_msg);    
-    registered = true;
-  }
-
-  if(debouncerReset.rose()) { 
-    
-    factory_reset();
-    
-  }
-
-  if(debouncerA.rose()) { 
-
-    if (is_onA)
-      is_onA = false;
-    else
-      is_onA = true;   
-
-    if (is_onA) {
-      client.publish(status_topicA.c_str(), "on");
-      is_onA = true;
-    } else {
-      client.publish(status_topicA.c_str(), "off");
-      is_onA = false;
+  
+    if (!client.connected()) {
+      if (WiFi.status() == WL_CONNECTED)
+        reconnect_mqtt();
+    }
+  
+    client.loop();
+  
+    if (!registered) {
+      register_msg = switch_id + "," + WiFi.localIP().toString();
+      client.publish(register_topic.c_str(), register_msg.c_str());
+      
+      // Serial.println("Register: " + register_msg);    
+      registered = true;
+    }
+  
+    if(debouncerReset.rose()) { 
+      
+      factory_reset();
+      
+    }
+  
+    if(debouncerA.rose()) { 
+  
+      if (is_onA)
+        is_onA = false;
+      else
+        is_onA = true;   
+  
+      if (is_onA) {
+        client.publish(status_topicA.c_str(), "on");
+        is_onA = true;
+      } else {
+        client.publish(status_topicA.c_str(), "off");
+        is_onA = false;
+      }
+  
+    }
+  
+    if(debouncerB.rose()) { 
+  
+      if (is_onB)
+        is_onB = false;
+      else
+        is_onB = true;   
+  
+      if (is_onB) {
+        client.publish(status_topicB.c_str(), "on");
+        is_onB = true;
+      } else {
+        client.publish(status_topicB.c_str(), "off");
+        is_onB = false;
+      } 
+  
+    }
+  
+    if(debouncerC.rose()) { 
+  
+      if (is_onC)
+        is_onC = false;
+      else
+        is_onC = true;   
+  
+      if (is_onC) {
+        client.publish(status_topicC.c_str(), "on");
+        is_onC = true;
+      } else {
+        client.publish(status_topicC.c_str(), "off");
+        is_onC = false;
+      } 
+  
+    }
+  
+    if(debouncerD.rose()) { 
+  
+      if (is_onD)
+        is_onD = false;
+      else
+        is_onD = true;   
+  
+      if (is_onD) {
+        client.publish(status_topicD.c_str(), "on");
+        is_onD = true;
+      } else {
+        client.publish(status_topicD.c_str(), "off");
+        is_onD = false;
+      } 
+  
     }
 
   }
-
-  if(debouncerB.rose()) { 
-
-    if (is_onB)
-      is_onB = false;
-    else
-      is_onB = true;   
-
-    if (is_onB) {
-      client.publish(status_topicB.c_str(), "on");
-      is_onB = true;
-    } else {
-      client.publish(status_topicB.c_str(), "off");
-      is_onB = false;
-    } 
-
-  }
-
-  if(debouncerC.rose()) { 
-
-    if (is_onC)
-      is_onC = false;
-    else
-      is_onC = true;   
-
-    if (is_onC) {
-      client.publish(status_topicC.c_str(), "on");
-      is_onC = true;
-    } else {
-      client.publish(status_topicC.c_str(), "off");
-      is_onC = false;
-    } 
-
-  }
-
-  if(debouncerD.rose()) { 
-
-    if (is_onD)
-      is_onD = false;
-    else
-      is_onD = true;   
-
-    if (is_onD) {
-      client.publish(status_topicD.c_str(), "on");
-      is_onD = true;
-    } else {
-      client.publish(status_topicD.c_str(), "off");
-      is_onD = false;
-    } 
-
-  }
-
+  
   server.handleClient();
 }
